@@ -1,0 +1,1 @@
+worker: python nebula_feed/main.py
