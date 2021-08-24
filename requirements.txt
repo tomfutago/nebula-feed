@@ -1,41 +1,40 @@
-aiohttp @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/41/c6/4f/2a5d5d0f821fb93b44e222d22472c1ca10308daf6a6abbe5ec7a2e3879/aiohttp-3.7.4.post0-cp39-cp39-win_amd64.whl
-asn1crypto @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/c5/b9/72/6baab91d6f901723f6b6635377881fee0bc2b7a583460a3557a79ca679/asn1crypto-1.4.0-py2.py3-none-any.whl
-async-timeout @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/e1/e7/dc/347dacf16e20e4b15a992103281583f3a03db422172dec1c5f08d68c07/async_timeout-3.0.1-py3-none-any.whl
-atomicwrites @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/b7/99/9c/c8ddc18c8225c740fc2ae6d503da3f93d5dddaf04afac3da460afacbc6/atomicwrites-1.4.0-py2.py3-none-any.whl
-attrs @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/6f/a9/ee/569c37f69a8c365ee41d2340aeac0214ee8c0086b8d8db43a21545204b/attrs-21.2.0-py2.py3-none-any.whl
-certifi @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/cd/2c/dc/e5bfda594e18f3f1e9af9f11e13581014d821425f325f3220b3ed2c337/certifi-2021.5.30-py2.py3-none-any.whl
-cffi @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/87/a1/f1/fac2a39ae7a06c6bedba00ddf095f3483426cda9953469d2ad4915c0ca/cffi-1.14.6-cp39-cp39-win_amd64.whl
-chardet @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/11/63/f9/797eda27963177a6b75a340f62aa194d462ea69e6b0dbb77a651fa2b62/chardet-4.0.0-py2.py3-none-any.whl
-charset-normalizer @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/e0/69/bc/9f03bea1c18fddcbfc52ed595f99fdbc68f8a5c0d479e589bca308ac21/charset_normalizer-2.0.4-py3-none-any.whl
-coincurve @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/91/d1/12/7d568a3f78b1455c40b7366e3d8dfa296519c073eb22d4668b61b1fed2/coincurve-13.0.0-py2.py3-none-win_amd64.whl
-colorama @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/9e/b3/11/7d87ac44fdb2d557301f1f4086a37c080d1482a98751abe7cdbabbad26/colorama-0.4.4-py2.py3-none-any.whl
-cytoolz @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/d5/05/7a/53eb6541a714c4392b85116d0019771dc2250fdfe7e7c58460ebdabe47/cytoolz-0.11.0-cp39-cp39-win_amd64.whl
-discord-webhook @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/c5/ed/cf/29fc8d918a8cdaa5d06013219e911f1057aa360f135b9806f099ea2373/discord_webhook-0.14.0-py3-none-any.whl
-discord.py @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/d1/5f/66/274375f006291cb0d2f970f035f9980576f1fb32bada939002d7b5d015/discord.py-1.7.3-py3-none-any.whl
-eth-hash @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/ee/84/27/06697a94a23e06ca29f55738cc04da3b02736028958f7ddb213a45ebbc/eth_hash-0.3.1-py3-none-any.whl
-eth-keyfile @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/44/63/a8/375cdecd35ac75d543c28b8182a2ea352259bcced782ed9457f006322e/eth_keyfile-0.5.1-py3-none-any.whl
-eth-keys @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/6c/60/df/b3dc755d8f996bf475674e84d5a58f16a884fb5e98fcc235b5f5cf19fe/eth_keys-0.3.3-py3-none-any.whl
-eth-typing @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/2b/4b/f8/0cf09cb0f8832eb875d36579c1a857203bbb066add0a10b52a634ef230/eth_typing-2.2.2-py3-none-any.whl
-eth-utils @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/43/78/84/a16aeba200c9316e51565edc8dcd130fc7ac5efde45455d66b1643918b/eth_utils-1.10.0-py3-none-any.whl
-iconsdk @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/4f/7c/11/05f5289fed0a7dec1c4fedff018204ea0f10d6ff5a2b7b7b4cdb9f8230/iconsdk-1.3.5-py3-none-any.whl
-idna @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/ff/0d/80/b45ae1ddba13a20e406682fd42ce6c201d9bedc5f592bee00cf799a1fb/idna-3.2-py3-none-any.whl
-more-itertools @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/47/d4/7d/526affa62eb0c76eec19004cbbf18cc4e55f51c665e92b88bb2ed25752/more_itertools-8.8.0-py3-none-any.whl
-multidict @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/10/33/1f/30c8444bc83e97297c51aaa96dadadcf34b932e0a9acba82443ebe6b4d/multidict-5.1.0-cp39-cp39-win_amd64.whl
-multipledispatch @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/41/24/00/8f61293bbebc10f3b3d40462aa0f46dd21394c74a5cdccafb470698aca/multipledispatch-0.6.0-py3-none-any.whl
-nebula-feed==0.1.0
-packaging @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/f9/4f/09/c91a145b26102e014fd6e33bd8c7b87306c8e1d4a771158f34dd13210e/packaging-21.0-py3-none-any.whl
-pluggy @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/29/58/fc/ed8b7451d3ef91a6465024f5656141da996e7aafd4d41a1659629a75e7/pluggy-0.13.1-py2.py3-none-any.whl
-py @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/60/79/0b/c48bd9c2a989aa8b1eb7a67cd02b053c10734f2e4e5665f7995f09999c/py-1.10.0-py2.py3-none-any.whl
-pycparser @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/37/8e/5a/0ea4f84bc7f11e0e3468110efa2c7783241ea7eaa63a92a751de06f78f/pycparser-2.20-py2.py3-none-any.whl
-pycryptodome @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/21/ed/a7/b7c1f17bd8716f91a61128e6b9451e2ce226ed6240ec42905e1c5ff367/pycryptodome-3.10.1-cp35-abi3-win_amd64.whl
-pyparsing @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/92/0f/cf/effdcd5d76a6186df0969f85b3b030284ff8058936d5016540b5258ea3/pyparsing-2.4.7-py2.py3-none-any.whl
-pytest @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/e4/88/dd/3dbff42e3c4462dc3d027f5024025571166cb35edee215ce93852a968c/pytest-5.4.3-py3-none-any.whl
-python-dotenv @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/18/b8/a3/8951d0982e502880707d9b287028b0ea076da56ff6171ec458a5fb2aef/python_dotenv-0.19.0-py2.py3-none-any.whl
-requests @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/13/00/3d/5574756561eed6b522f5b13d5a2c05c2920860b05b1e687c3792495ba0/requests-2.26.0-py2.py3-none-any.whl
-requests-mock @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/a8/81/eb/12e9218c61b8329874f8eae902cb759de5626e6bb5c1af50691e681576/requests_mock-1.8.0-py2.py3-none-any.whl
-six @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/08/9f/47/c16ae03035fc69eaf100ea39657a49baaeef714e25a52575710c34cd48/six-1.16.0-py2.py3-none-any.whl
-toolz @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/76/04/1d/f46d18706c5f71cc9eaeb2e5fc2c4e83d7b86def15ba7bdcf478790f04/toolz-0.11.1-py3-none-any.whl
-typing-extensions @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/3d/38/26/2c9b521373bbaf207e658ec81f51aa2a8af7454bfe4d7c15743a6533d5/typing_extensions-3.10.0.0-py3-none-any.whl
-urllib3 @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/84/ae/1e/899a124988c3b1274d9ceaf303b9261a955a4f383e23b05b83381b7faa/urllib3-1.26.6-py2.py3-none-any.whl
-wcwidth @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/7d/f4/60/0737157bb9711fec72c70dff523aa54491eef317e0d586cf5388ff0908/wcwidth-0.2.5-py2.py3-none-any.whl
-yarl @ file:///C:/Users/TPiotrwski/AppData/Local/pypoetry/Cache/artifacts/3d/e5/08/9a0296e5bdded0058c649377d1bc9bf234a414ab303066b5c6c14cbf20/yarl-1.6.3-cp39-cp39-win_amd64.whl
+aiohttp
+asn1crypto
+async-timeout
+atomicwrites
+attrs
+certifi
+cffi
+chardet
+charset-normalizer
+coincurve
+colorama
+cytoolz
+discord-webhook
+discord.py
+eth-hash
+eth-keyfile
+eth-keys
+eth-typing
+eth-utils
+iconsdk
+idna
+more-itertools
+multidict
+multipledispatch
+packaging
+pluggy
+py
+pycparser
+pycryptodome
+pyparsing
+pytest
+python-dotenv
+requests
+requests-mock
+six
+toolz
+typing-extensions
+urllib3
+wcwidth
+yarl
