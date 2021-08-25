@@ -2,4 +2,3 @@ discord.py
 discord-webhook
 python-dotenv
 iconsdk
-gunicorn

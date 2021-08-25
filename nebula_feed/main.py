@@ -12,7 +12,11 @@ from iconsdk.exception import JSONRPCException
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 # load discord webhook
-load_dotenv()
+is_heroku = os.getenv('IS_HEROKU', None)
+
+if not is_heroku:
+    load_dotenv()
+
 discord_webhook = os.getenv("DISCORD_WEBHOOK")
 
 # Project Nebula contracts
@@ -47,7 +51,7 @@ def is_json(content: str):
     return True
 
 # latest block height
-block_height = 38686216 #icon_service.get_block("latest")["height"]
+block_height = 38771900 # 38686216 #icon_service.get_block("latest")["height"]
 
 while True:
     while True:
@@ -57,81 +61,91 @@ while True:
             sleep(2)
             continue
         else:
-            for tx in block["confirmed_transaction_list"]:
-                if "to" in tx:
-                    if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
-                        message = ""
-                        txHash = tx["txHash"]
-                        txDetail = icon_service.get_transaction(txHash)
-                        owner = txDetail["from"]
-                        #timestamp = datetime.fromtimestamp(txDetail["timestamp"] / 1000000).replace(microsecond=0).isoformat()
-                        timestamp = int(txDetail["timestamp"] / 1000000)
-                        cost = txDetail["value"] / 10 ** 18
-                        tokenId = int(txDetail["data"]["params"]["_token_id"], 16)
+            try:
+                move_on = True
+                for tx in block["confirmed_transaction_list"]:
+                    if "to" in tx:
+                        if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
+                            message = ""
+                            txHash = tx["txHash"]
+                            txDetail = icon_service.get_transaction(txHash)
+                            owner = txDetail["from"]
+                            #timestamp = datetime.fromtimestamp(txDetail["timestamp"] / 1000000).replace(microsecond=0).isoformat()
+                            timestamp = int(txDetail["timestamp"] / 1000000)
+                            cost = txDetail["value"] / 10 ** 18
+                            tokenId = int(txDetail["data"]["params"]["_token_id"], 16)
 
-                        # pull token details
-                        response_content = requests.get(call(NebulaPlanetTokenCx, "tokenURI", {"_tokenId": tokenId})).text
+                            # pull token details
+                            response_content = requests.get(call(NebulaPlanetTokenCx, "tokenURI", {"_tokenId": tokenId})).text
 
-                        if is_json(response_content):
-                            json_content = json.loads(response_content)
-                        else:
-                            continue
+                            if is_json(response_content):
+                                json_content = json.loads(response_content)
+                            else:
+                                continue
 
-                        # if json is ok - get granual data
-                        if "error" not in json_content:
-                            # obfuscate owner's address
-                            owner = owner[:8] + ".." + owner[34:]
-                            
-                            # get basic info about the token
-                            name = str(json_content["name"]).upper()
-                            rarity = str(json_content["rarity"]).lower()
-                            generation = str(json_content["generation"]).upper()
-                            subtitle = (rarity + " / " + generation).upper()
-                            type = str(json_content["type"]).lower()
-                            credits = str(json_content["credits"])
-                            industry = str(json_content["industry"])
-                            research = str(json_content["research"])
-                            income = credits + "C / " + industry + "I / " + research + "R"
-                            image_url = json_content["image"]
-                            external_link = json_content["external_link"]
-                            
-                            special_resources = []
-                            for special in json_content["specials"]:
-                                special_resources.append(str(special["name"]))
-                            specials = ', '.join(special_resources)
+                            # if json is ok - get granual data
+                            if "error" not in json_content:
+                                # obfuscate owner's address
+                                owner = owner[:8] + ".." + owner[34:]
+                                
+                                # get basic info about the token
+                                name = str(json_content["name"]).upper()
+                                if name == "UNDISCOVERED PLANET":
+                                    sleep(5)
+                                    move_on = False
+                                    continue
 
-                            # Markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
-                            info = "\nType: " + type \
-                                 + "\nIncome: " + income
-                            
-                            if len(specials) > 0:
-                                info += "\nSpecials: " + specials
-                            
-                            info += "\nHappy owner: " + owner \
-                                  + "\n[Check it out here](" + external_link + ")"
-                            
-                            if rarity == "common":
-                                color = "BFC9CA"
-                            elif rarity == "uncommon":
-                                color = "FDFEFE"
-                            elif rarity == "rare":
-                                color = "3498DB"
-                            elif rarity == "legendary":
-                                color = "9B59B6"
-                            elif rarity == "mythic":
-                                color = "F39C12"
+                                rarity = str(json_content["rarity"]).lower()
+                                generation = str(json_content["generation"]).upper()
+                                subtitle = (rarity + " / " + generation).upper()
+                                type = str(json_content["type"]).lower()
+                                credits = str(json_content["credits"])
+                                industry = str(json_content["industry"])
+                                research = str(json_content["research"])
+                                income = credits + "C / " + industry + "I / " + research + "R"
+                                image_url = json_content["image"]
+                                external_link = json_content["external_link"]
+                                
+                                special_resources = []
+                                for special in json_content["specials"]:
+                                    special_resources.append(str(special["name"]))
+                                specials = ', '.join(special_resources)
 
-                        if len(info) > 0:
-                            webhook = DiscordWebhook(url=discord_webhook)
+                                # Markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
+                                info = "\nType: " + type \
+                                    + "\nIncome: " + income
+                                
+                                if len(specials) > 0:
+                                    info += "\nSpecials: " + specials
+                                
+                                info += "\nHappy owner: " + owner \
+                                    + "\n[Check it out here](" + external_link + ")"
+                                
+                                if rarity == "common":
+                                    color = "2C3E50"
+                                elif rarity == "uncommon":
+                                    color = "FDFEFE"
+                                elif rarity == "rare":
+                                    color = "3498DB"
+                                elif rarity == "legendary":
+                                    color = "8E44AD"
+                                elif rarity == "mythic":
+                                    color = "F39C12"
 
-                            embed = DiscordEmbed(title=name, color=color)
-                            embed.set_thumbnail(url=image_url)
-                            embed.add_embed_field(name=subtitle, value=info)
-                            embed.set_footer(text="Claimed on ")
-                            embed.set_timestamp(timestamp)
-                            
-                            webhook.add_embed(embed)
-                            response = webhook.execute()
+                            if len(info) > 0:
+                                webhook = DiscordWebhook(url=discord_webhook)
 
-        finally:
-            block_height += 1
+                                embed = DiscordEmbed(title=name, color=color)
+                                embed.set_thumbnail(url=image_url)
+                                embed.add_embed_field(name=subtitle, value=info)
+                                embed.set_footer(text="Claimed on ")
+                                embed.set_timestamp(timestamp)
+                                
+                                webhook.add_embed(embed)
+                                response = webhook.execute()
+
+                if move_on:
+                    block_height += 1
+            except:
+                sleep(2)
+                continue
