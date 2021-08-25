@@ -122,7 +122,7 @@ while True:
                                     + "\n[Check it out here](" + external_link + ")"
                                 
                                 if rarity == "common":
-                                    color = "2C3E50"
+                                    color = "808B96"
                                 elif rarity == "uncommon":
                                     color = "FDFEFE"
                                 elif rarity == "rare":
