@@ -51,7 +51,7 @@ def is_json(content: str):
     return True
 
 # latest block height
-block_height = 38771900 # 38686216 #icon_service.get_block("latest")["height"]
+block_height = icon_service.get_block("latest")["height"] #38771900
 
 while True:
     while True:
@@ -93,7 +93,7 @@ while True:
                                 if name == "UNDISCOVERED PLANET":
                                     sleep(5)
                                     move_on = False
-                                    continue
+                                    break
 
                                 rarity = str(json_content["rarity"]).lower()
                                 generation = str(json_content["generation"]).upper()
