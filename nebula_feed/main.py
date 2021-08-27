@@ -56,6 +56,7 @@ block_height = icon_service.get_block("latest")["height"]
 while True:
     try:
         block = icon_service.get_block(block_height)
+        block -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue 
         print("block:", block_height)
     except JSONRPCException:
         sleep(2)
@@ -68,6 +69,8 @@ while True:
                     if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
                         # pull token details - max tries 5x
                         # if name == "UNDISCOVERED PLANET" - wait 5s and try again
+                        # 60 seconds delay on the main loop should allow for just 1 pass through this loop
+                        # but keeping in the additional retry loop as a safety net
                         for n in range(5):
                             txHash = tx["txHash"]
                             txDetail = icon_service.get_transaction(txHash)
