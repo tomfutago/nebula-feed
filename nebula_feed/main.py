@@ -55,8 +55,8 @@ block_height = icon_service.get_block("latest")["height"]
 
 while True:
     try:
+        block_height -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue 
         block = icon_service.get_block(block_height)
-        block -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue 
         print("block:", block_height)
     except JSONRPCException:
         sleep(2)
