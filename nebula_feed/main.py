@@ -50,12 +50,11 @@ def set_color(rarity: str) -> str:
     return color
 
 
-# latest block height
-block_height = icon_service.get_block("latest")["height"]
-
 while True:
     try:
-        block_height -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue 
+        # latest block height
+        block_height = icon_service.get_block("latest")["height"]
+        block_height -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue
         block = icon_service.get_block(block_height)
         print("block:", block_height)
     except JSONRPCException:
@@ -143,8 +142,9 @@ while True:
                             webhook.add_embed(embed)
                             response = webhook.execute()
 
-            if move_on:
-                block_height += 1
+            # not necessary with checking for latest block at the top of the loop
+            #if move_on:
+            #    block_height += 1
         except:
             sleep(2)
             continue
