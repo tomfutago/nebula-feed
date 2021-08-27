@@ -49,12 +49,11 @@ def set_color(rarity: str) -> str:
         color = "F39C12"
     return color
 
+# latest block height
+block_height = icon_service.get_block("latest")["height"]
 
 while True:
     try:
-        # latest block height
-        block_height = icon_service.get_block("latest")["height"]
-        block_height -= 30 # keep it 30 blocks (60 seconds) behind in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue
         block = icon_service.get_block(block_height)
         print("block:", block_height)
     except JSONRPCException:
@@ -66,10 +65,8 @@ while True:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
                     if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
+                        sleep(60) # wait 60s in hope to avoid "UNDISCOVERED PLANET" (minting time?) issue
                         # pull token details - max tries 5x
-                        # if name == "UNDISCOVERED PLANET" - wait 5s and try again
-                        # 60 seconds delay on the main loop should allow for just 1 pass through this loop
-                        # but keeping in the additional retry loop as a safety net
                         for n in range(5):
                             txHash = tx["txHash"]
                             txDetail = icon_service.get_transaction(txHash)
@@ -85,6 +82,7 @@ while True:
                             # if json is ok - check name
                             if "error" not in planetInfo:
                                 name = str(planetInfo["name"]).upper()
+                                # if name == "UNDISCOVERED PLANET" - wait 5s and try again
                                 if name == "UNDISCOVERED PLANET":
                                     sleep(5)
                                     move_on = False
@@ -143,8 +141,8 @@ while True:
                             response = webhook.execute()
 
             if move_on:
-                sleep(2)
-                #block_height += 1 # not necessary with checking for latest block at the top of the loop
+                #sleep(2)
+                block_height += 1 # not necessary with checking for latest block at the top of the loop
         except:
             sleep(2)
             continue
