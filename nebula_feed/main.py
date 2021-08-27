@@ -142,9 +142,9 @@ while True:
                             webhook.add_embed(embed)
                             response = webhook.execute()
 
-            # not necessary with checking for latest block at the top of the loop
-            #if move_on:
-            #    block_height += 1
+            if move_on:
+                sleep(2)
+                #block_height += 1 # not necessary with checking for latest block at the top of the loop
         except:
             sleep(2)
             continue
