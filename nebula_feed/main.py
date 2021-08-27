@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 import requests
 from datetime import datetime
@@ -28,124 +27,121 @@ icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
 
 # function for making a call
 def call(to, method, params):
-    try:
-        call = CallBuilder()\
-            .to(to)\
-            .method(method)\
-            .params(params)\
-            .build()
-        result = icon_service.call(call)
-        return result
-    except:
-        __, exception_object, exception_traceback = sys.exc_info()
-        line_number = exception_traceback.tb_lineno
-        e = "error: " + str(exception_object) + " at line number: " + str(line_number)
-        return e
+    call = CallBuilder()\
+        .to(to)\
+        .method(method)\
+        .params(params)\
+        .build()
+    result = icon_service.call(call)
+    return result
 
-# check if valid json
-def is_json(content: str):
-    try:
-        json_object = json.loads(content)
-    except ValueError as e:
-        return False
-    return True
+def set_color(rarity: str) -> str:
+    rarity = rarity.lower()
+    if rarity == "common":
+        color = "808B96"
+    elif rarity == "uncommon":
+        color = "FDFEFE"
+    elif rarity == "rare":
+        color = "3498DB"
+    elif rarity == "legendary":
+        color = "8E44AD"
+    elif rarity == "mythic":
+        color = "F39C12"
+    return color
+
 
 # latest block height
-block_height = icon_service.get_block("latest")["height"] #38771900
+block_height = icon_service.get_block("latest")["height"]
 
 while True:
-    while True:
+    try:
+        block = icon_service.get_block(block_height)
+        print("block:", block_height)
+    except JSONRPCException:
+        sleep(2)
+        continue
+    else:
         try:
-            block = icon_service.get_block(block_height)
-        except JSONRPCException:
-            sleep(2)
-            continue
-        else:
-            try:
-                move_on = True
-                for tx in block["confirmed_transaction_list"]:
-                    if "to" in tx:
-                        if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
-                            message = ""
+            move_on = True
+            for tx in block["confirmed_transaction_list"]:
+                if "to" in tx:
+                    if tx["to"] == NebulaTokenClaimingCx and tx["data"]["method"] == "claim_token":
+                        # pull token details - max tries 5x
+                        # if name == "UNDISCOVERED PLANET" - wait 5s and try again
+                        for n in range(5):
                             txHash = tx["txHash"]
                             txDetail = icon_service.get_transaction(txHash)
-                            owner = txDetail["from"]
-                            #timestamp = datetime.fromtimestamp(txDetail["timestamp"] / 1000000).replace(microsecond=0).isoformat()
-                            timestamp = int(txDetail["timestamp"] / 1000000)
-                            cost = txDetail["value"] / 10 ** 18
                             tokenId = int(txDetail["data"]["params"]["_token_id"], 16)
 
-                            # pull token details
-                            response_content = requests.get(call(NebulaPlanetTokenCx, "tokenURI", {"_tokenId": tokenId})).text
-
-                            if is_json(response_content):
-                                json_content = json.loads(response_content)
-                            else:
+                            try:
+                                planetInfo = requests.get(call(NebulaPlanetTokenCx, "tokenURI", {"_tokenId": tokenId})).json()
+                            except JSONRPCException:
+                                sleep(5)
+                                move_on = False
                                 continue
 
-                            # if json is ok - get granual data
-                            if "error" not in json_content:
-                                # obfuscate owner's address
-                                owner = owner[:8] + ".." + owner[34:]
-                                
-                                # get basic info about the token
-                                name = str(json_content["name"]).upper()
+                            # if json is ok - check name
+                            if "error" not in planetInfo:
+                                name = str(planetInfo["name"]).upper()
                                 if name == "UNDISCOVERED PLANET":
                                     sleep(5)
                                     move_on = False
+                                else:
+                                    move_on = True
                                     break
+                        
+                        # retrieving planet details failed - move on
+                        if move_on == False:
+                            break
 
-                                rarity = str(json_content["rarity"]).lower()
-                                generation = str(json_content["generation"]).upper()
-                                subtitle = (rarity + " / " + generation).upper()
-                                type = str(json_content["type"]).lower()
-                                credits = str(json_content["credits"])
-                                industry = str(json_content["industry"])
-                                research = str(json_content["research"])
-                                income = credits + "C / " + industry + "I / " + research + "R"
-                                image_url = json_content["image"]
-                                external_link = json_content["external_link"]
-                                
-                                special_resources = []
-                                for special in json_content["specials"]:
-                                    special_resources.append(str(special["name"]))
-                                specials = ', '.join(special_resources)
+                        # get basic info about the token
+                        owner = txDetail["from"]
+                        #timestamp = datetime.fromtimestamp(txDetail["timestamp"] / 1000000).replace(microsecond=0).isoformat()
+                        timestamp = int(txDetail["timestamp"] / 1000000)
+                        cost = txDetail["value"] / 10 ** 18
 
-                                # Markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
-                                info = "\nType: " + type \
-                                    + "\nIncome: " + income
-                                
-                                if len(specials) > 0:
-                                    info += "\nSpecials: " + specials
-                                
-                                info += "\nHappy owner: " + owner \
-                                    + "\n[Check it out here](" + external_link + ")"
-                                
-                                if rarity == "common":
-                                    color = "808B96"
-                                elif rarity == "uncommon":
-                                    color = "FDFEFE"
-                                elif rarity == "rare":
-                                    color = "3498DB"
-                                elif rarity == "legendary":
-                                    color = "8E44AD"
-                                elif rarity == "mythic":
-                                    color = "F39C12"
+                        # obfuscate owner's address
+                        owner = owner[:8] + ".." + owner[34:]
+                        rarity = str(planetInfo["rarity"]).lower()
+                        generation = str(planetInfo["generation"]).upper()
+                        subtitle = (rarity + " / " + generation).upper()
+                        type = str(planetInfo["type"]).lower()
+                        credits = str(planetInfo["credits"])
+                        industry = str(planetInfo["industry"])
+                        research = str(planetInfo["research"])
+                        income = credits + "C / " + industry + "I / " + research + "R"
+                        image_url = planetInfo["image"]
+                        external_link = planetInfo["external_link"]
+                        
+                        special_resources = []
+                        for special in planetInfo["specials"]:
+                            special_resources.append(str(special["name"]))
+                        specials = ', '.join(special_resources)
 
-                            if len(info) > 0:
-                                webhook = DiscordWebhook(url=discord_webhook)
+                        # Markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
+                        info = "\nType: " + type + "\nIncome: " + income
+                        
+                        if len(specials) > 0:
+                            info += "\nSpecials: " + specials
+                        
+                        info += "\nHappy owner: " + owner + "\n[Check it out here](" + external_link + ")"
+                        
+                        color = set_color(rarity)
 
-                                embed = DiscordEmbed(title=name, color=color)
-                                embed.set_thumbnail(url=image_url)
-                                embed.add_embed_field(name=subtitle, value=info)
-                                embed.set_footer(text="Claimed on ")
-                                embed.set_timestamp(timestamp)
-                                
-                                webhook.add_embed(embed)
-                                response = webhook.execute()
+                        if len(info) > 0:
+                            webhook = DiscordWebhook(url=discord_webhook)
 
-                if move_on:
-                    block_height += 1
-            except:
-                sleep(2)
-                continue
+                            embed = DiscordEmbed(title=name, color=color)
+                            embed.set_thumbnail(url=image_url)
+                            embed.add_embed_field(name=subtitle, value=info)
+                            embed.set_footer(text="Claimed on ")
+                            embed.set_timestamp(timestamp)
+                            
+                            webhook.add_embed(embed)
+                            response = webhook.execute()
+
+            if move_on:
+                block_height += 1
+        except:
+            sleep(2)
+            continue
