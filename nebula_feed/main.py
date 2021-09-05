@@ -55,7 +55,7 @@ block_height = icon_service.get_block("latest")["height"]
 while True:
     try:
         block = icon_service.get_block(block_height)
-        print("block:", block_height)
+        #print("block:", block_height)
     except JSONRPCException:
         sleep(2)
         continue
