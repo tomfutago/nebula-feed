@@ -1,68 +1,84 @@
+import os
 import json
+import icx_tx
+from dotenv import load_dotenv
 
-# Project Nebula contracts
-NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
-NebulaSpaceshipTokenCx = "cx943cf4a4e4e281d82b15ae0564bbdcbf8114b3ec"
+# load env variables
+is_heroku = os.getenv("IS_HEROKU", None)
+if not is_heroku:
+    load_dotenv()
+
+# custom emoji IDs
+credits_emoji = os.getenv("credits_emoji")
+industry_emoji = os.getenv("industry_emoji")
+research_emoji = os.getenv("research_emoji")
+# todo: add ship modifiers once available on official PN discord
+
 
 class PNToken:
-    def __init__(self, contract: str, txInfo: dict, tokenInfo: json) -> None:
-        self.contract = contract
-        
+    def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: json) -> None:
         # obfuscate address
-        self.address = txInfo["address"][:8] + ".." + txInfo["address"][34:]
+        self.address = txInfo.address[:8] + ".." + txInfo.address[34:]
         
         # get common attributes
         self.generation = str(tokenInfo["generation"])
         self.type = str(tokenInfo["type"]).strip()
         self.image_url = tokenInfo["image"]
         self.external_link = tokenInfo["external_link"]
-
+        self.timestamp = txInfo.timestamp
         self.info = "\n"
 
-        if txInfo["method"] == "create_auction":
+        if txInfo.method != "claim_token":
+            self.discord_webhook = os.getenv("DISCORD_MARKET_WEBHOOK")
+
+        if txInfo.method == "claim_token":
+            self.discord_webhook = os.getenv("DISCORD_CLAIMED_WEBHOOK")
+            self.title = "Claimed!"
+            self.footer = "Claimed on "
+            self.info += "\nHappy owner: " + self.address
+        elif txInfo.method == "create_auction":
             self.title = "On auction now!"
             self.footer = "Auctioned on "
             self.info += "\nSeller: " + self.address
-            self.info += "\nStarting price: " + txInfo["starting_price"]
-            self.info += "\nDuration: " + txInfo["duration_in_hours"] + "hrs"
-        elif txInfo["method"] == "list_token":
+            self.info += "\nStarting price: " + txInfo.starting_price
+            self.info += "\nDuration: " + txInfo.duration_in_hours + "hrs"
+        elif txInfo.method == "list_token":
             self.title = "On sale now!"
             self.footer = "Put on sale on "
             self.info += "\nSeller: " + self.address
-            self.info += "\nSet price: " + txInfo["set_price"]
-        elif txInfo["method"] == "place_bid":
+            self.info += "\nSet price: " + txInfo.set_price
+        elif txInfo.method == "place_bid":
             self.title = "Bid placed!"
             self.footer = "Bid placed on "
             self.info += "\nBidder: " + self.address
-            self.info += "\nPrice: " + txInfo["cost"]
-        elif txInfo["method"] == "purchase_token":
+            self.info += "\nPrice: " + txInfo.cost
+        elif txInfo.method == "purchase_token":
             self.title = "Sold!"
             self.footer = "Sold on "
             self.info += "\nNew owner: " + self.address
-            self.info += "\nPrice: " + txInfo["cost"]
+            self.info += "\nPrice: " + txInfo.cost
         
         self.info += "\n[Check it out here](" + self.external_link + ")"
 
 class Planet(PNToken):
-    def __init__(self, contract: str, txInfo: dict, tokenInfo: json) -> None:
-        super().__init__(contract, txInfo, tokenInfo)
+    def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: json) -> None:
+        super().__init__(txInfo, tokenInfo)
 
         # get basic info about the token per token type
-        if self.contract == NebulaPlanetTokenCx:
-            self.name = str(tokenInfo["name"])
-            self.rarity = str(tokenInfo["rarity"])
-            self.credits = str(tokenInfo["credits"])
-            self.industry = str(tokenInfo["industry"])
-            self.research = str(tokenInfo["research"])
-            
-            # any special resources?
-            special_resources = []
-            for special in tokenInfo["specials"]:
-                special_resources.append(str(special["name"]))
-            self.specials = ', '.join(special_resources)
+        self.name = str(tokenInfo["name"])
+        self.rarity = str(tokenInfo["rarity"])
+        self.credits = str(tokenInfo["credits"])
+        self.industry = str(tokenInfo["industry"])
+        self.research = str(tokenInfo["research"])
+        
+        # any special resources?
+        special_resources = []
+        for special in tokenInfo["specials"]:
+            special_resources.append(str(special["name"]))
+        self.specials = ', '.join(special_resources)
 
     def set_income(self):
-        return self.credits + "<:Credit:>/" + self.industry + "<:Industry:>/" + self.research + "<:Research:>"
+        return credits_emoji + self.credits + industry_emoji + self.industry + research_emoji + self.research
 
     def generate_discord_info(self) -> str:
         # create discord info output
@@ -93,19 +109,17 @@ class Planet(PNToken):
             color = "F39C12" #orange
         return color
 
-
 class Spaceship(PNToken):
-    def __init__(self, contract: str, txInfo: dict, tokenInfo: json) -> None:
-        super().__init__(contract, txInfo, tokenInfo)
+    def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: json) -> None:
+        super().__init__(txInfo, tokenInfo)
 
-        if contract == NebulaSpaceshipTokenCx:
-            self.name = str(tokenInfo["model_name"])
-            self.rarity = str(tokenInfo["set_type"])
-            self.tier = str(tokenInfo["tier"])
-            self.exploration = str(tokenInfo["exploration"])
-            self.colonization = str(tokenInfo["colonization"])
-            self.movement = str(tokenInfo["movement"])
-            self.fuel = str(tokenInfo["fuel"])
+        self.name = str(tokenInfo["model_name"])
+        self.rarity = str(tokenInfo["set_type"])
+        self.tier = str(tokenInfo["tier"])
+        self.exploration = str(tokenInfo["exploration"])
+        self.colonization = str(tokenInfo["colonization"])
+        self.movement = str(tokenInfo["movement"])
+        self.fuel = str(tokenInfo["fuel"])
 
     def set_modifiers(self):
         return self.exploration + "E / " + self.colonization + "C / " + self.movement + "M / " + self.fuel + "F"

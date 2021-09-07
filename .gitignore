@@ -3,3 +3,7 @@
 
 # Ignore files related to API keys
 .env
+
+# Ignore compiled bytecode python files
+*.pyc
+__pycache__
