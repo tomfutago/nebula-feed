@@ -8,10 +8,10 @@ is_heroku = os.getenv("IS_HEROKU", None)
 if not is_heroku:
     load_dotenv()
 
-# custom emoji IDs
-credits_emoji = os.getenv("credits_emoji")
-industry_emoji = os.getenv("industry_emoji")
-research_emoji = os.getenv("research_emoji")
+# custom emoji IDs - removed as discord complains about excedding API rate limits
+#credits_emoji = os.getenv("credits_emoji")
+#industry_emoji = os.getenv("industry_emoji")
+#research_emoji = os.getenv("research_emoji")
 # todo: add ship modifiers once available on official PN discord
 
 
@@ -78,7 +78,8 @@ class Planet(PNToken):
         self.specials = ', '.join(special_resources)
 
     def set_income(self):
-        return credits_emoji + self.credits + industry_emoji + self.industry + research_emoji + self.research
+        #return credits_emoji + self.credits + industry_emoji + self.industry + research_emoji + self.research
+        return "C" + self.credits + " I" + self.industry + " R" + self.research
 
     def generate_discord_info(self) -> str:
         # create discord info output
@@ -122,7 +123,7 @@ class Spaceship(PNToken):
         self.fuel = str(tokenInfo["fuel"])
 
     def set_modifiers(self):
-        return self.exploration + "E / " + self.colonization + "C / " + self.movement + "M / " + self.fuel + "F"
+        return "E" + self.exploration + " C" + self.colonization + " M" + self.movement + " F" + self.fuel
 
     def generate_discord_info(self) -> str:
         # create discord info output
