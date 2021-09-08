@@ -33,7 +33,7 @@ block_height = icon_service.get_block("latest")["height"]
 while True:
     try:
         block = icon_service.get_block(block_height)
-        print("block:", block_height)
+        #print("block:", block_height)
     except JSONRPCException:
         sleep(2)
         continue
@@ -42,7 +42,7 @@ while True:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
                     if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
-                        print("in..")
+                        print("block:", block_height, "processing..")
 
                         # check if tx uses expected method - if not skip and move on
                         method = tx["data"]["method"]
@@ -68,6 +68,10 @@ while True:
 
                         print("past check 2")
 
+                        # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
+                        if txInfoCurrent.contract == NebulaTokenClaimingCx:
+                            txInfoCurrent.contract = NebulaPlanetTokenCx
+                        
                         # pull token details - if operation fails skip and move on
                         try:
                             tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
@@ -83,12 +87,18 @@ while True:
                         print("past check 4")
 
                         # get token info
-                        if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaPlanetTokenCx:
+                        if txInfoCurrent.contract == NebulaPlanetTokenCx:
                             token = pn_token.Planet(txInfoCurrent, tokenInfo)
                             print("past planet token")
                         elif txInfoCurrent.contract == NebulaSpaceshipTokenCx:
                             token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
                             print("past ship token")
+
+                        # check if "UNDISCOVERED PLANET" - if so, skip and move on
+                        if token.isUndiscovered:
+                            continue
+
+                        print("past check 5")
 
                         if len(token.info) > 0:
                             print("before sending discord feed")

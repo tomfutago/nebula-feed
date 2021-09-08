@@ -70,6 +70,12 @@ class Planet(PNToken):
         self.credits = str(tokenInfo["credits"])
         self.industry = str(tokenInfo["industry"])
         self.research = str(tokenInfo["research"])
+
+        # check name for claimed planets
+        if self.name.upper() == "UNDISCOVERED PLANET":
+            self.isUndiscovered = True
+        else:
+            self.isUndiscovered = False
         
         # any special resources?
         special_resources = []
@@ -121,6 +127,7 @@ class Spaceship(PNToken):
         self.colonization = str(tokenInfo["colonization"])
         self.movement = str(tokenInfo["movement"])
         self.fuel = str(tokenInfo["fuel"])
+        self.isUndiscovered = False
 
     def set_modifiers(self):
         return "E" + self.exploration + " C" + self.colonization + " M" + self.movement + " F" + self.fuel
