@@ -1,5 +1,4 @@
 import json
-from logging import exception
 import requests
 from time import sleep
 from iconsdk.icon_service import IconService
@@ -7,7 +6,6 @@ from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.exception import JSONRPCException
 from discord_webhook import DiscordWebhook, DiscordEmbed
-from requests.models import ReadTimeoutError
 
 import icx_tx
 import pn_token
@@ -46,6 +44,7 @@ while True:
 
                         # check if tx uses expected method - if not skip and move on
                         method = tx["data"]["method"]
+                        print("method:", method)
                         expected_methods = ["claim_token", "create_auction", "list_token", "place_bid", "purchase_token"]
                         if method not in expected_methods:
                             continue
