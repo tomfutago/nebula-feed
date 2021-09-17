@@ -28,11 +28,14 @@ class PNToken:
         self.timestamp = txInfo.timestamp
         self.info = "\n"
 
-        if txInfo.method != "claim_token":
-            self.discord_webhook = os.getenv("DISCORD_MARKET_WEBHOOK")
-
+        # set destination discord channel
         if txInfo.method == "claim_token":
             self.discord_webhook = os.getenv("DISCORD_CLAIMED_WEBHOOK")
+        else:
+            self.discord_webhook = os.getenv("DISCORD_MARKET_WEBHOOK")
+
+        # collect building blocks for discord embed
+        if txInfo.method == "claim_token":
             self.title = "Claimed!"
             self.footer = "Claimed on "
             self.info += "\nHappy owner: " + self.address
@@ -57,6 +60,18 @@ class PNToken:
             self.footer = "Sold on "
             self.info += "\nNew owner: " + self.address
             self.info += "\nPrice: " + txInfo.cost
+        elif txInfo.method == "finalize_auction":
+            self.title = "Auction finalized!"
+            self.footer = "Finalized on "
+            self.info += "\nNew owner: " + self.address
+        elif txInfo.method == "return_unsold_item":
+            self.title = "Unsold and returned :("
+            self.footer = "Returned on "
+            self.info += "\nOwner: " + self.address
+        elif txInfo.method == "delist_token":
+            self.title = "Delisted!"
+            self.footer = "Delisted on "
+            self.info += "\nOwner: " + self.address
         
         self.info += "\n[Check it out here](" + self.external_link + ")"
 

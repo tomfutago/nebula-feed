@@ -40,21 +40,19 @@ while True:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
                     if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
-                        print("block:", block_height, "processing..")
-
                         # check if tx uses expected method - if not skip and move on
                         method = tx["data"]["method"]
-                        print("method:", method)
-                        expected_methods = ["claim_token", "create_auction", "list_token", "place_bid", "purchase_token"]
+                        print("block:", block_height, "method:", method, "processing..")
+
+                        expected_methods = [
+                            "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
+                            "finalize_auction", "return_unsold_item", "delist_token"
+                        ]
                         if method not in expected_methods:
                             continue
 
-                        print("past check 1")
-
                         # create instance of current transaction
                         txInfoCurrent = icx_tx.TxInfo(tx)
-
-                        print("past tx info..")
 
                         # check if tx was successful - if not skip and move on
                         try:
@@ -63,9 +61,8 @@ while True:
                             if txResult["status"] == 0:
                                 continue
                         except:
+                            print("tx marked as failed..")
                             continue
-
-                        print("past check 2")
 
                         # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
                         if txInfoCurrent.contract == NebulaTokenClaimingCx:
@@ -75,32 +72,26 @@ while True:
                         try:
                             tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
                         except:
+                            print("pulling token info unsuccessful..")
                             continue
-
-                        print("past check 3")
 
                         # check if json ok - if not skip and move on
                         if "error" in tokenInfo:
+                            print("token info contains 'error'..")
                             continue
-
-                        print("past check 4")
 
                         # get token info
                         if txInfoCurrent.contract == NebulaPlanetTokenCx:
                             token = pn_token.Planet(txInfoCurrent, tokenInfo)
-                            print("past planet token")
                         elif txInfoCurrent.contract == NebulaSpaceshipTokenCx:
                             token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
-                            print("past ship token")
 
                         # check if "UNDISCOVERED PLANET" - if so, skip and move on
                         if token.isUndiscovered:
+                            print("undiscovered planet :(")
                             continue
 
-                        print("past check 5")
-
                         if len(token.info) > 0:
-                            print("before sending discord feed")
                             webhook = DiscordWebhook(url=token.discord_webhook)
                             embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())
                             embed.set_thumbnail(url=token.image_url)
