@@ -39,6 +39,7 @@ class PNToken:
             self.title = "Claimed!"
             self.footer = "Claimed on "
             self.info += "\nHappy owner: " + self.address
+            self.info += "\nClaimed for: " + txInfo.cost if txInfo.cost > 0 else "credits"
         elif txInfo.method == "create_auction":
             self.title = "On auction now!"
             self.footer = "Auctioned on "

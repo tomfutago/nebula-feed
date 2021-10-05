@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 from time import sleep
@@ -40,66 +41,61 @@ while True:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
                     if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
-                        # check if tx uses expected method - if not skip and move on
-                        method = tx["data"]["method"]
-                        print("block:", block_height, "method:", method, "processing..")
-
-                        expected_methods = [
-                            "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
-                            "finalize_auction", "return_unsold_item", "delist_token"
-                        ]
-                        if method not in expected_methods:
-                            continue
-
-                        # create instance of current transaction
-                        txInfoCurrent = icx_tx.TxInfo(tx)
-
-                        # check if tx was successful - if not skip and move on
                         try:
+                            # check if tx uses expected method - if not skip and move on
+                            method = tx["data"]["method"]
+                            #print("block:", block_height, "method:", method, "processing..")
+
+                            expected_methods = [
+                                "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
+                                "finalize_auction", "return_unsold_item", "delist_token"
+                            ]
+                            if method not in expected_methods:
+                                continue
+
+                            # create instance of current transaction
+                            txInfoCurrent = icx_tx.TxInfo(tx)
+
+                            # check if tx was successful - if not skip and move on
                             txResult = icon_service.get_transaction_result(txInfoCurrent.txHash)
                             # status : 1 on success, 0 on failure
                             if txResult["status"] == 0:
                                 continue
-                        except:
-                            print("tx marked as failed..")
-                            continue
 
-                        # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
-                        if txInfoCurrent.contract == NebulaTokenClaimingCx:
-                            txInfoCurrent.contract = NebulaPlanetTokenCx
-                        
-                        # pull token details - if operation fails skip and move on
-                        try:
+                            # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
+                            if txInfoCurrent.contract == NebulaTokenClaimingCx:
+                                txInfoCurrent.contract = NebulaPlanetTokenCx
+                            
+                            # pull token details - if operation fails skip and move on
                             tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
+
+                            # check if json ok - if not skip and move on
+                            if "error" in tokenInfo:
+                                print("token info contains 'error'..")
+                                continue
+
+                            # get token info
+                            if txInfoCurrent.contract == NebulaPlanetTokenCx:
+                                token = pn_token.Planet(txInfoCurrent, tokenInfo)
+                            elif txInfoCurrent.contract == NebulaSpaceshipTokenCx:
+                                token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
+
+                            # check if "UNDISCOVERED PLANET" - if so, skip and move on
+                            if token.isUndiscovered:
+                                print("undiscovered planet :(")
+                                continue
+
+                            if len(token.info) > 0:
+                                webhook = DiscordWebhook(url=token.discord_webhook)
+                                embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())
+                                embed.set_thumbnail(url=token.image_url)
+                                embed.set_footer(text=token.footer)
+                                embed.set_timestamp(token.timestamp)
+                                webhook.add_embed(embed)
+                                response = webhook.execute()
                         except:
-                            print("pulling token info unsuccessful..")
+                            print("Error: {}. {}, line: {}".format(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno))
                             continue
-
-                        # check if json ok - if not skip and move on
-                        if "error" in tokenInfo:
-                            print("token info contains 'error'..")
-                            continue
-
-                        # get token info
-                        if txInfoCurrent.contract == NebulaPlanetTokenCx:
-                            token = pn_token.Planet(txInfoCurrent, tokenInfo)
-                        elif txInfoCurrent.contract == NebulaSpaceshipTokenCx:
-                            token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
-
-                        # check if "UNDISCOVERED PLANET" - if so, skip and move on
-                        if token.isUndiscovered:
-                            print("undiscovered planet :(")
-                            continue
-
-                        if len(token.info) > 0:
-                            webhook = DiscordWebhook(url=token.discord_webhook)
-                            embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())
-                            embed.set_thumbnail(url=token.image_url)
-                            embed.set_footer(text=token.footer)
-                            embed.set_timestamp(token.timestamp)
-                            webhook.add_embed(embed)
-                            response = webhook.execute()
-                            print("discord feed sent..")
 
             block_height += 1
         except:
