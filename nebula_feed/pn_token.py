@@ -39,7 +39,7 @@ class PNToken:
             self.title = "Claimed!"
             self.footer = "Claimed on "
             self.info += "\nHappy owner: " + self.address
-            self.info += "\nClaimed for: " + txInfo.cost if txInfo.cost > 0 else "credits"
+            self.info += "\nClaimed for: " + txInfo.cost if int(txInfo.cost) > 0 else "credits"
         elif txInfo.method == "create_auction":
             self.title = "On auction now!"
             self.footer = "Auctioned on "
@@ -90,6 +90,7 @@ class Planet(PNToken):
         # check name for claimed planets
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
+            self.discord_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
         else:
             self.isUndiscovered = False
         

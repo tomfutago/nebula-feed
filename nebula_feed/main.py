@@ -81,9 +81,9 @@ while True:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
 
                             # check if "UNDISCOVERED PLANET" - if so, skip and move on
-                            if token.isUndiscovered:
-                                print("undiscovered planet :(")
-                                continue
+                            #if token.isUndiscovered:
+                            #    print("undiscovered planet :(")
+                            #    continue
 
                             if len(token.info) > 0:
                                 webhook = DiscordWebhook(url=token.discord_webhook)
