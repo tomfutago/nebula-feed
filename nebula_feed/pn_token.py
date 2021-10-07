@@ -121,6 +121,7 @@ class Planet(PNToken):
 
     def set_color(self) -> str:
         rarity = self.rarity.upper()
+        color = "808B96" #default: gray
         if rarity == "COMMON":
             color = "808B96" #gray
         elif rarity == "UNCOMMON":
@@ -162,6 +163,7 @@ class Spaceship(PNToken):
 
     def set_color(self) -> str:
         rarity = self.rarity.upper()
+        color = "808B96" #default: gray
         if rarity == "CORE":
             color = "3498DB" #blue
         elif rarity == "LORE`":
