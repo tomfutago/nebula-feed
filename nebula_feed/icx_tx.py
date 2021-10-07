@@ -43,7 +43,7 @@ class TxInfo:
         self.address = str(tx["from"])
         #self.timestamp = datetime.fromtimestamp(tx["timestamp"] / 1000000).replace(microsecond=0).isoformat()
         self.timestamp = int(tx["timestamp"] / 1000000)
-        self.cost = str(int(tx["value"]) / 10 ** 18)
+        self.cost = "{:.2f}".format(int(tx["value"]) / 10 ** 18)
         self.method = tx["data"]["method"]
         self.tokenId = int(tx["data"]["params"]["_token_id"], 16)
 
