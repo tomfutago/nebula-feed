@@ -15,6 +15,7 @@ import pn_token
 NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
 NebulaSpaceshipTokenCx = "cx943cf4a4e4e281d82b15ae0564bbdcbf8114b3ec"
 NebulaTokenClaimingCx = "cx4bfc45b11cf276bb58b3669076d99bc6b3e4e3b8"
+NebulaNonCreditClaim = "hx888ed0ff5ebc119e586b5f3d4a0ef20eaa0ed123"
 
 # connect to ICON main-net
 icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
@@ -40,18 +41,21 @@ while True:
         try:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
-                    if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
+                    if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx or tx["from"] == NebulaNonCreditClaim:
                         try:
                             # check if tx uses expected method - if not skip and move on
                             method = tx["data"]["method"]
                             #print("block:", block_height, "method:", method, "processing..")
 
-                            expected_methods = [
-                                "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
-                                "finalize_auction", "return_unsold_item", "delist_token"
-                            ]
-                            if method not in expected_methods:
+                            if tx["from"] == NebulaNonCreditClaim and method != "transfer":
                                 continue
+                            else:
+                                expected_methods = [
+                                    "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
+                                    "finalize_auction", "return_unsold_item", "delist_token"
+                                ]
+                                if method not in expected_methods:
+                                    continue
 
                             # create instance of current transaction
                             txInfoCurrent = icx_tx.TxInfo(tx)
@@ -63,7 +67,7 @@ while True:
                                 continue
 
                             # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
-                            if txInfoCurrent.contract == NebulaTokenClaimingCx:
+                            if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
                                 txInfoCurrent.contract = NebulaPlanetTokenCx
                             
                             # pull token details - if operation fails skip and move on

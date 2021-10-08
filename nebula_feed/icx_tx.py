@@ -45,7 +45,14 @@ class TxInfo:
         self.timestamp = int(tx["timestamp"] / 1000000)
         self.cost = "{:.2f}".format(int(tx["value"]) / 10 ** 18)
         self.method = tx["data"]["method"]
-        self.tokenId = int(tx["data"]["params"]["_token_id"], 16)
+
+        # tokens claimed for credits are transffered from specifc address rather than claiming contract:
+        if self.method == "transfer":
+            self.contract = self.address
+            self.address = str(tx["data"]["params"]["_to"])
+            self.tokenId = int(tx["data"]["params"]["_tokenId"], 16)
+        else:
+            self.tokenId = int(tx["data"]["params"]["_token_id"], 16)
 
         if self.method == "create_auction":
             self.set_price = ""

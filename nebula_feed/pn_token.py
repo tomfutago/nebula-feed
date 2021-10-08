@@ -29,17 +29,18 @@ class PNToken:
         self.info = "\n"
 
         # set destination discord channel
-        if txInfo.method == "claim_token":
+        if txInfo.method == "claim_token" or txInfo.method == "transfer":
             self.discord_webhook = os.getenv("DISCORD_CLAIMED_WEBHOOK")
         else:
             self.discord_webhook = os.getenv("DISCORD_MARKET_WEBHOOK")
 
         # collect building blocks for discord embed
-        if txInfo.method == "claim_token":
+        if txInfo.method == "claim_token" or txInfo.method == "transfer":
             self.title = "Claimed!"
             self.footer = "Claimed on "
             self.info += "\nHappy owner: " + self.address
-            self.info += "\nClaimed for: " + txInfo.cost if float(txInfo.cost) > 0 else "credits"
+            self.info += "\nClaimed for: "
+            self.info += txInfo.cost if float(txInfo.cost) > 0 else "credits"
         elif txInfo.method == "create_auction":
             self.title = "On auction now!"
             self.footer = "Auctioned on "
