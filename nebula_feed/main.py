@@ -69,6 +69,7 @@ while True:
                             # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
                             if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
                                 txInfoCurrent.contract = NebulaPlanetTokenCx
+                                sleep(60)
                             
                             # pull token details - if operation fails skip and move on
                             tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
