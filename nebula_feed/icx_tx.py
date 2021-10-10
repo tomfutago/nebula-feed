@@ -50,9 +50,9 @@ class TxInfo:
         if self.method == "transfer":
             self.contract = self.address
             self.address = str(tx["data"]["params"]["_to"])
-            self.tokenId = int(tx["data"]["params"]["_tokenId"], 16)
+            self.tokenId = hex_to_int(tx["data"]["params"]["_tokenId"])
         else:
-            self.tokenId = int(tx["data"]["params"]["_token_id"], 16)
+            self.tokenId = hex_to_int(tx["data"]["params"]["_token_id"])
 
         if self.method == "create_auction":
             self.set_price = ""

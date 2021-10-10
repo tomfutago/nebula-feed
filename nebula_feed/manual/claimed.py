@@ -27,10 +27,11 @@ def call(to, method, params):
 def AddClaimPlanet(block_height):
     try:
         block = icon_service.get_block(block_height)
+        #print(json.dumps(block, indent = 4))
 
         for tx in block["confirmed_transaction_list"]:
             if "to" in tx:
-                if tx["to"] == NebulaTokenClaimingCx or tx["from"] == NebulaNonCreditClaim:
+                if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaTokenClaimingCx:
                     # check if tx uses expected method - if not skip and move on
                     method = tx["data"]["method"]
                     
@@ -49,7 +50,8 @@ def AddClaimPlanet(block_height):
                         continue
 
                     # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
-                    txInfoCurrent.contract = NebulaPlanetTokenCx
+                    if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
+                        txInfoCurrent.contract = NebulaPlanetTokenCx
                     
                     # pull token details - if operation fails skip and move on
                     tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
@@ -74,63 +76,4 @@ def AddClaimPlanet(block_height):
         print("Error: {}. {}, line: {}".format(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno))
 
 ###################################
-#AddClaimPlanet(block_height=40393974)
-#AddClaimPlanet(block_height=40405184)
-#AddClaimPlanet(block_height=40425171)
-#AddClaimPlanet(block_height=40427632)
-#AddClaimPlanet(block_height=40429355)
-#sleep(15)
-#AddClaimPlanet(block_height=40448016)
-#AddClaimPlanet(block_height=40452793)
-#AddClaimPlanet(block_height=40459988)
-#AddClaimPlanet(block_height=40466170)
-#AddClaimPlanet(block_height=40475546)
-#sleep(15)
-#AddClaimPlanet(block_height=40493554)
-#AddClaimPlanet(block_height=40514571) #credits
-#AddClaimPlanet(block_height=40525655) #credits
-#AddClaimPlanet(block_height=40527763) #credits
-#AddClaimPlanet(block_height=40533645)
-#sleep(15)
-#AddClaimPlanet(block_height=40535420)
-#AddClaimPlanet(block_height=40548432)
-#AddClaimPlanet(block_height=40549836)
-#AddClaimPlanet(block_height=40550081)
-#sleep(15)
-#AddClaimPlanet(block_height=40550141)
-#AddClaimPlanet(block_height=40552537)
-#AddClaimPlanet(block_height=40564038) #credits
-#AddClaimPlanet(block_height=40568917)
-#sleep(15)
-#AddClaimPlanet(block_height=40569476)
-#AddClaimPlanet(block_height=40570041) #credits
-#AddClaimPlanet(block_height=40571164)
-#AddClaimPlanet(block_height=40571443)
-#AddClaimPlanet(block_height=40573677) #credits
-#sleep(15)
-#AddClaimPlanet(block_height=40575468)
-#AddClaimPlanet(block_height=40577998)
-#AddClaimPlanet(block_height=40578623)
-#AddClaimPlanet(block_height=40582084)
-#AddClaimPlanet(block_height=40590873)
-#AddClaimPlanet(block_height=40592998)
-#AddClaimPlanet(block_height=40598139) #credits
-#sleep(15)
-#AddClaimPlanet(block_height=40606754)
-#AddClaimPlanet(block_height=40613779)
-#AddClaimPlanet(block_height=40616690)
-#AddClaimPlanet(block_height=40625571) #credits
-#AddClaimPlanet(block_height=40641980)
-#AddClaimPlanet(block_height=40647545)
-
-#AddClaimPlanet(block_height=40662866)
-#AddClaimPlanet(block_height=40675265)
-#AddClaimPlanet(block_height=40663287)
-#AddClaimPlanet(block_height=40677392)
-#AddClaimPlanet(block_height=40675619)
-#sleep(10)
-#AddClaimPlanet(block_height=40684255)
-#AddClaimPlanet(block_height=40687547)
-#AddClaimPlanet(block_height=40687687)
-#AddClaimPlanet(block_height=40688940)
-#AddClaimPlanet(block_height=40689111)
+AddClaimPlanet(block_height=40731951)

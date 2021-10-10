@@ -1,6 +1,6 @@
 import os
 import json
-import icx_tx
+from nebula_feed import icx_tx
 from dotenv import load_dotenv
 
 # load env variables
@@ -92,6 +92,7 @@ class Planet(PNToken):
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
             self.discord_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
+            self.info += "\nblockHeight: " + str(int(tokenInfo["blockHeight"], 16))
         else:
             self.isUndiscovered = False
         

@@ -8,8 +8,8 @@ from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.exception import JSONRPCException
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
-import icx_tx
-import pn_token
+from nebula_feed import icx_tx
+from nebula_feed import pn_token
 
 # Project Nebula contracts
 NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
@@ -41,13 +41,14 @@ while True:
         try:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
-                    if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx or tx["from"] == NebulaNonCreditClaim:
+                    if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
                         try:
                             # check if tx uses expected method - if not skip and move on
                             method = tx["data"]["method"]
                             #print("block:", block_height, "method:", method, "processing..")
 
                             if tx["from"] == NebulaNonCreditClaim and method != "transfer":
+                                print("NebulaNonCreditClaim with non-transfer method.. block:", block_height)
                                 continue
                             else:
                                 expected_methods = [
