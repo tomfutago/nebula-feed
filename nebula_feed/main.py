@@ -57,15 +57,19 @@ while True:
                                 ]
                                 if method not in expected_methods:
                                     continue
-
-                            # create instance of current transaction
-                            txInfoCurrent = icx_tx.TxInfo(tx)
+                            
+                            # add delay to avoid error msg below after ICON 2.0 upgrade
+                            # iconsdk.exception.JSONRPCException: {'code': -31003, 'message': 'Executing : Executing'}
+                            sleep(2)
 
                             # check if tx was successful - if not skip and move on
-                            txResult = icon_service.get_transaction_result(txInfoCurrent.txHash)
+                            txResult = icon_service.get_transaction_result(tx["txHash"])
                             # status : 1 on success, 0 on failure
                             if txResult["status"] == 0:
                                 continue
+
+                            # create instance of current transaction
+                            txInfoCurrent = icx_tx.TxInfo(tx)
 
                             # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
                             if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
