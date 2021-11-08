@@ -8,6 +8,8 @@ is_heroku = os.getenv("IS_HEROKU", None)
 if not is_heroku:
     load_dotenv()
 
+discord_log_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
+
 # custom emoji IDs - removed as discord complains about excedding API rate limits
 #credits_emoji = os.getenv("credits_emoji")
 #industry_emoji = os.getenv("industry_emoji")
@@ -91,7 +93,7 @@ class Planet(PNToken):
         # check name for claimed planets
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
-            self.discord_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
+            self.discord_webhook = discord_log_webhook
             self.info += "\nblockHeight: " + str(int(tokenInfo["blockHeight"], 16))
         else:
             self.isUndiscovered = False

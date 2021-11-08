@@ -26,6 +26,18 @@ def call(to, method, params):
     result = icon_service.call(call)
     return result
 
+# function for sending error msg to discord webhook
+def send_log_to_webhook(block_height: int, txHash: str, method: str, error: str):
+    err_msg = "Project Nebula log"
+    err_msg += "\nblock_height: " + str(block_height)
+    err_msg += "\ntxHash: " + txHash
+    err_msg += "\nmethod: " + method
+    err_msg += "\nERROR: " + error
+    err_msg += "\n"
+    webhook = DiscordWebhook(url=pn_token.discord_log_webhook, rate_limit_retry=True, content=err_msg)
+    response = webhook.execute()
+    return response
+
 
 # latest block height
 block_height = icon_service.get_block("latest")["height"]
@@ -81,7 +93,8 @@ while True:
 
                             # check if json ok - if not skip and move on
                             if "error" in tokenInfo:
-                                print("token info contains 'error'..")
+                                # send to log webhook
+                                response = send_log_to_webhook(block_height, tx["txHash"], method, "token info contains 'error'")
                                 continue
 
                             # get token info
@@ -96,7 +109,7 @@ while True:
                             #    continue
 
                             if len(token.info) > 0:
-                                webhook = DiscordWebhook(url=token.discord_webhook)
+                                webhook = DiscordWebhook(url=token.discord_webhook, rate_limit_retry=True)
                                 embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())
                                 embed.set_thumbnail(url=token.image_url)
                                 embed.set_footer(text=token.footer)
@@ -104,7 +117,9 @@ while True:
                                 webhook.add_embed(embed)
                                 response = webhook.execute()
                         except:
-                            print("Error: {}. {}, line: {}".format(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno))
+                            #send to log webhook
+                            err_msg = "{}. {}, line: {}".format(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2].tb_lineno)
+                            response = send_log_to_webhook(block_height, tx["txHash"], method, err_msg)
                             continue
 
             block_height += 1
