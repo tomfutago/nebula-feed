@@ -94,7 +94,7 @@ class Planet(PNToken):
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
             self.discord_webhook = discord_log_webhook
-            self.info += "\nblockHeight: " + str(int(tokenInfo["blockHeight"], 16))
+            self.info += "\nUNDISCOVERED PLANET - tokenId: " + str(txInfo.tokenId)
         else:
             self.isUndiscovered = False
         

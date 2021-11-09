@@ -59,9 +59,11 @@ while True:
                             method = tx["data"]["method"]
                             #print("block:", block_height, "method:", method, "processing..")
 
-                            if tx["from"] == NebulaNonCreditClaim and method != "transfer":
-                                print("NebulaNonCreditClaim with non-transfer method.. block:", block_height)
-                                continue
+                            if tx["from"] == NebulaNonCreditClaim:
+                                if method != "transfer":
+                                    err_msg = "NebulaNonCreditClaim with non-transfer method.."
+                                    response = send_log_to_webhook(block_height, tx["txHash"], method, err_msg)
+                                    continue
                             else:
                                 expected_methods = [
                                     "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
