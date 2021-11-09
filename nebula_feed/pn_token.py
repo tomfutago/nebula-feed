@@ -42,7 +42,7 @@ class PNToken:
             self.footer = "Claimed on "
             self.info += "\nHappy owner: " + self.address
             self.info += "\nClaimed for: "
-            self.info += txInfo.cost if float(txInfo.cost) > 0 else "credits"
+            self.info += txInfo.cost if float(txInfo.cost.replace(" ICX", "")) > 0 else "credits"
         elif txInfo.method == "create_auction":
             self.title = "On auction now!"
             self.footer = "Auctioned on "
@@ -68,6 +68,7 @@ class PNToken:
             self.title = "Auction finalized!"
             self.footer = "Finalized on "
             self.info += "\nNew owner: " + self.address
+            self.info += "\nSeller's cut: " + txInfo.get_ICXTransfer()
         elif txInfo.method == "return_unsold_item":
             self.title = "Unsold and returned :("
             self.footer = "Returned on "
