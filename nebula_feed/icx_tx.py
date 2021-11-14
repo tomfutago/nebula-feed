@@ -5,8 +5,9 @@ from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.exception import JSONRPCException
 
-# Project Nebula contract
+# Project Nebula contracts
 NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
+NebulaSpaceshipTokenCx = "cx943cf4a4e4e281d82b15ae0564bbdcbf8114b3ec"
 
 # connect to ICON main-net
 icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
@@ -75,7 +76,7 @@ class TxInfo:
         icx_amt = ""
         if txResult["status"] == 1: #success
             for x in txResult["eventLogs"]:
-                if x["scoreAddress"] == NebulaPlanetTokenCx:
+                if x["scoreAddress"] == NebulaPlanetTokenCx or x["scoreAddress"] == NebulaSpaceshipTokenCx:
                     if "ICXTransfer(Address,Address,int)" in x["indexed"]:
                         icx_amt = f'{hex_to_int(x["indexed"][3]) / 10 ** 18 :.2f} ICX'
         return icx_amt
