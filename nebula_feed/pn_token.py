@@ -1,21 +1,6 @@
-import os
 import json
+from nebula_feed import config
 from nebula_feed import icx_tx
-from dotenv import load_dotenv
-
-# load env variables
-is_heroku = os.getenv("IS_HEROKU", None)
-if not is_heroku:
-    load_dotenv()
-
-discord_log_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
-
-# custom emoji IDs - removed as discord complains about excedding API rate limits
-#credits_emoji = os.getenv("credits_emoji")
-#industry_emoji = os.getenv("industry_emoji")
-#research_emoji = os.getenv("research_emoji")
-# todo: add ship modifiers once available on official PN discord
-
 
 class PNToken:
     def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: json) -> None:
@@ -32,9 +17,9 @@ class PNToken:
 
         # set destination discord channel
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
-            self.discord_webhook = os.getenv("DISCORD_CLAIMED_WEBHOOK")
+            self.discord_webhook = config.discord_claimed_webhook
         else:
-            self.discord_webhook = os.getenv("DISCORD_MARKET_WEBHOOK")
+            self.discord_webhook = config.discord_market_webhook
 
         # collect building blocks for discord embed
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
@@ -94,7 +79,7 @@ class Planet(PNToken):
         # check name for claimed planets
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
-            self.discord_webhook = discord_log_webhook
+            self.discord_webhook = config.discord_log_webhook
             self.info += "\nUNDISCOVERED PLANET - tokenId: " + str(txInfo.tokenId)
         else:
             self.isUndiscovered = False

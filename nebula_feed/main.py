@@ -8,14 +8,9 @@ from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.exception import JSONRPCException
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
+from nebula_feed import config
 from nebula_feed import icx_tx
 from nebula_feed import pn_token
-
-# Project Nebula contracts
-NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
-NebulaSpaceshipTokenCx = "cx943cf4a4e4e281d82b15ae0564bbdcbf8114b3ec"
-NebulaTokenClaimingCx = "cx4bfc45b11cf276bb58b3669076d99bc6b3e4e3b8"
-NebulaNonCreditClaim = "hx888ed0ff5ebc119e586b5f3d4a0ef20eaa0ed123"
 
 # connect to ICON main-net
 icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
@@ -53,13 +48,13 @@ while True:
         try:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
-                    if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaSpaceshipTokenCx or tx["to"] == NebulaTokenClaimingCx:
+                    if tx["to"] == config.NebulaPlanetTokenCx or tx["to"] == config.NebulaSpaceshipTokenCx or tx["to"] == config.NebulaTokenClaimingCx:
                         try:
                             # check if tx uses expected method - if not skip and move on
                             method = tx["data"]["method"]
                             #print("block:", block_height, "method:", method, "processing..")
 
-                            if tx["from"] == NebulaNonCreditClaim:
+                            if tx["from"] == config.NebulaNonCreditClaim:
                                 if method != "transfer":
                                     err_msg = "NebulaNonCreditClaim with non-transfer method.."
                                     response = send_log_to_webhook(block_height, tx["txHash"], method, err_msg)
@@ -86,8 +81,8 @@ while True:
                             txInfoCurrent = icx_tx.TxInfo(tx)
 
                             # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
-                            if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
-                                txInfoCurrent.contract = NebulaPlanetTokenCx
+                            if txInfoCurrent.contract == config.NebulaTokenClaimingCx or txInfoCurrent.contract == config.NebulaNonCreditClaim:
+                                txInfoCurrent.contract = config.NebulaPlanetTokenCx
                                 sleep(60)
                             
                             # pull token details - if operation fails skip and move on
@@ -100,9 +95,9 @@ while True:
                                 continue
 
                             # get token info
-                            if txInfoCurrent.contract == NebulaPlanetTokenCx:
+                            if txInfoCurrent.contract == config.NebulaPlanetTokenCx:
                                 token = pn_token.Planet(txInfoCurrent, tokenInfo)
-                            elif txInfoCurrent.contract == NebulaSpaceshipTokenCx:
+                            elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
 
                             # check if "UNDISCOVERED PLANET" - if so, skip and move on

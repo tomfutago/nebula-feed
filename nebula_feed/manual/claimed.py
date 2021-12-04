@@ -1,19 +1,18 @@
 import sys
-import json
+import psycopg2
 import requests
-from time import sleep
+from datetime import datetime
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.builder.call_builder import CallBuilder
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
+from nebula_feed import config
 from nebula_feed import icx_tx
 from nebula_feed import pn_token
 
-# Project Nebula contracts
-NebulaPlanetTokenCx = "cx57d7acf8b5114b787ecdd99ca460c2272e4d9135"
-NebulaTokenClaimingCx = "cx4bfc45b11cf276bb58b3669076d99bc6b3e4e3b8"
-NebulaNonCreditClaim = "hx888ed0ff5ebc119e586b5f3d4a0ef20eaa0ed123"
+conn = psycopg2.connect(config.db_url, sslmode="require")
+cur = conn.cursor()
 
 # connect to ICON main-net
 icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
@@ -31,13 +30,13 @@ def AddClaimPlanet(block_height):
 
         for tx in block["confirmed_transaction_list"]:
             if "to" in tx:
-                if tx["to"] == NebulaPlanetTokenCx or tx["to"] == NebulaTokenClaimingCx:
+                if tx["to"] == config.NebulaPlanetTokenCx or tx["to"] == config.NebulaTokenClaimingCx:
                     # check if tx uses expected method - if not skip and move on
                     method = tx["data"]["method"]
                     
-                    if tx["to"] == NebulaTokenClaimingCx and method != "claim_token":
+                    if tx["to"] == config.NebulaTokenClaimingCx and method != "claim_token":
                         continue
-                    elif tx["from"] == NebulaNonCreditClaim and method != "transfer":
+                    elif tx["from"] == config.NebulaNonCreditClaim and method != "transfer":
                         continue
 
                     # create instance of current transaction
@@ -50,8 +49,8 @@ def AddClaimPlanet(block_height):
                         continue
 
                     # to pull token info for NebulaTokenClaimingCx - NebulaPlanetTokenCx contract needs to be used
-                    if txInfoCurrent.contract == NebulaTokenClaimingCx or txInfoCurrent.contract == NebulaNonCreditClaim:
-                        txInfoCurrent.contract = NebulaPlanetTokenCx
+                    if txInfoCurrent.contract == config.NebulaTokenClaimingCx or txInfoCurrent.contract == config.NebulaNonCreditClaim:
+                        txInfoCurrent.contract = config.NebulaPlanetTokenCx
                     
                     # pull token details - if operation fails skip and move on
                     tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
@@ -63,6 +62,9 @@ def AddClaimPlanet(block_height):
 
                     # get token info
                     token = pn_token.Planet(txInfoCurrent, tokenInfo)
+
+                    cur.execute("insert into ClaimedPlanets(TokenId, PlanetName, ClaimedDate) values (%s, %s, %s);",
+                        (txInfoCurrent.tokenId, token.name, txInfoCurrent.timestamp_iso))
 
                     if len(token.info) > 0:
                         webhook = DiscordWebhook(url=token.discord_webhook)
@@ -77,3 +79,10 @@ def AddClaimPlanet(block_height):
 
 ###################################
 AddClaimPlanet(block_height=40731951)
+
+# Make the changes to the database persistent
+conn.commit()
+
+# Close communication with the database
+cur.close()
+conn.close()

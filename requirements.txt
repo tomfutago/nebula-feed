@@ -1,4 +1,4 @@
-discord.py
-discord-webhook
-python-dotenv
 iconsdk
+python-dotenv
+psycopg2-binary
+discord-webhook
