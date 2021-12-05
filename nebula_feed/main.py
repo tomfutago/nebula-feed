@@ -1,6 +1,7 @@
 import sys
 import json
 import requests
+import psycopg2
 from time import sleep
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
@@ -20,6 +21,23 @@ def call(to, method, params):
     call = CallBuilder().to(to).method(method).params(params).build()
     result = icon_service.call(call)
     return result
+
+# function for adding new record to ClaimedPlanets table
+def add_to_ClaimedPlanets(TokenId: int, PlanetName: str, ClaimedDate: str):
+    # open db connection and cursor to perform db operations
+    conn = psycopg2.connect(config.db_url, sslmode="require")
+    cur = conn.cursor()
+
+    # add new record
+    cur.execute(
+        "insert into ClaimedPlanets(TokenId, PlanetName, ClaimedDate) values (%s, %s, %s);",
+        (TokenId, PlanetName, ClaimedDate)
+    )
+
+    # commit and close connection
+    conn.commit()
+    cur.close()
+    conn.close()
 
 # function for sending error msg to discord webhook
 def send_log_to_webhook(block_height: int, txHash: str, method: str, error: str):
@@ -100,12 +118,10 @@ while True:
                             elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
 
-                            # check if "UNDISCOVERED PLANET" - if so, skip and move on
-                            #if token.isUndiscovered:
-                            #    print("undiscovered planet :(")
-                            #    continue
-
                             if len(token.info) > 0:
+                                if token.isClaimed:
+                                    add_to_ClaimedPlanets(txInfoCurrent.tokenId, token.name, txInfoCurrent.timestamp_iso)
+                                
                                 webhook = DiscordWebhook(url=token.discord_webhook, rate_limit_retry=True)
                                 embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())
                                 embed.set_thumbnail(url=token.image_url)

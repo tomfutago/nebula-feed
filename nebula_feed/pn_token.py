@@ -18,8 +18,10 @@ class PNToken:
         # set destination discord channel
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
             self.discord_webhook = config.discord_claimed_webhook
+            self.isClaimed = True
         else:
             self.discord_webhook = config.discord_market_webhook
+            self.isClaimed = False
 
         # collect building blocks for discord embed
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
