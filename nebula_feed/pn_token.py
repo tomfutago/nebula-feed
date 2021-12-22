@@ -73,6 +73,8 @@ class Planet(PNToken):
 
         # get basic info about the token per token type
         self.name = str(tokenInfo["name"])
+        self.region = str(tokenInfo["location"]["region_name"])
+        self.sector = str(tokenInfo["location"]["sector_name"])
         self.rarity = str(tokenInfo["rarity"])
         self.credits = str(tokenInfo["credits"])
         self.industry = str(tokenInfo["industry"])
@@ -100,6 +102,7 @@ class Planet(PNToken):
         # create discord info output
         # markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
         info = "**" + self.name.upper() + "**"
+        info += "\n" + self.region.title() + " - " + self.sector.title()
         info += "\n" + self.rarity.upper() + " / " + self.generation.upper()
         info += "\n"
         info += "\nType: " + self.type.lower().strip()
