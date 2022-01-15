@@ -47,7 +47,7 @@ def send_log_to_webhook(block_height: int, txHash: str, method: str, error: str)
     err_msg += "\nmethod: " + method
     err_msg += "\nERROR: " + error
     err_msg += "\n"
-    webhook = DiscordWebhook(url=pn_token.discord_log_webhook, rate_limit_retry=True, content=err_msg)
+    webhook = DiscordWebhook(url=config.discord_log_webhook, rate_limit_retry=True, content=err_msg)
     response = webhook.execute()
     return response
 
