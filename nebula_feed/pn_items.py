@@ -61,7 +61,7 @@ class PNItem:
         # create discord info output
         # markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
         info = "**" + self.name + "**"
-        info += "\n" + self.type
+        info += "\n*" + self.type.lower() + "*"
         info += "\n"
         info += self.info
         return info
