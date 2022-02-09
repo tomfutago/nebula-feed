@@ -60,8 +60,8 @@ class PNItem:
     def generate_discord_info(self) -> str:
         # create discord info output
         # markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
-        info = "**" + self.type + "**"
-        info += "\n" + self.name
+        info = "**" + self.name + "**"
+        info += "\n" + self.type
         info += "\n"
         info += self.info
         return info
