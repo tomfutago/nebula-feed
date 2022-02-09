@@ -114,7 +114,7 @@ while True:
                             elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
                                 token = pn_items.PNItem(txInfoCurrent)
 
-                            if len(token.info) > 0:
+                            if len(token.info) > 0 and len(token.name) > 0:
                                 if token.isClaimed:
                                     add_to_ClaimedPlanets(txInfoCurrent.tokenId, token.name, txInfoCurrent.timestamp_iso)
                                 
