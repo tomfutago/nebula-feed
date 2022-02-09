@@ -1,0 +1,93 @@
+{
+	"method": "createSellOrder",
+	"params": {
+		"_tokenId": "0x2785",
+		"_price": "0x821ab0d4414980000",
+		"_amount": "0x1"
+	}
+}
+
+event contains OrderId?
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[CreateSellOrder(int,Address), 0x11c, hx7b1ed976b049a1bd4e123ad2aabffd9e1a583b33],"data":[]}
+
+
+{
+	"method": "createBuyOrder",
+	"params": {
+		"_tokenId": "0x6",
+		"_price": "0x2386f26fc10000",
+		"_amount": "0x1"
+	}
+}
+
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[CreateBuyOrder(int,Address), 0x122, hxdaf3b8bf5844ed3ebf104f2e8f13b4f5ceff2160],"data":[]}
+
+
+{
+	"method": "buyTokens",
+	"params": {
+		"_orderId": "0xc8",
+		"_amount": "0x1"
+	}
+}
+
+events:
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[BuyTokens(int,int,Address,Address,int,int), 0xc8, 0x3],"data":[hx2d9f00e2693e0bf74d88f2d7f262e7ec664cfb6f, hxa33065e54304238a44e59915225e34c770fa094a, 0x1, 0x4563918244f40000]}
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[ICXTransfer(Address,Address,int), cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a, hx2d9f00e2693e0bf74d88f2d7f262e7ec664cfb6f, 0x43a77aabd0078000],"data":[]}
+
+
+
+{
+	"method": "cancelOrder",
+	"params": {
+		"_orderId": "0x11d"
+	}
+}
+
+
+
+{
+	"method": "mintBatch",
+	"params": {
+		"_owner": "hxdaeb59373891b8f4084ce044259ae8687b688280",
+		"_ids": [
+			"4",
+			"25",
+			"32"
+		],
+		"_amounts": [
+			"3",
+			"2",
+			"2"
+		]
+	}
+}
+
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[TransferBatch(Address,Address,Address,bytes,bytes), hxdaeb59373891b8f4084ce044259ae8687b688280, hx0000000000000000000000000000000000000000, hxdaeb59373891b8f4084ce044259ae8687b688280],"data":[0xc3041920, 0xc3030202]}
+
+{
+	"method": "burnBatch",
+	"params": {
+		"_owner": "hxb3a486783b7d0c0c4fec74c98c50c717568edadb",
+		"_ids": [
+			"4"
+		],
+		"_amounts": [
+			"14"
+		],
+		"_transferId": "0x20e"
+	}
+}
+
+
+{
+	"method": "transferFrom",
+	"params": {
+		"_from": "hx394ec52117166462d61932476229263c2ebe7bbd",
+		"_to": "hx6507502cd38e4b58139e5423740a5866033dc569",
+		"_id": "0x2738",
+		"_value": "0x1"
+	}
+}
+
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[TransferSingle(Address,Address,Address,int,int), hx394ec52117166462d61932476229263c2ebe7bbd, hx394ec52117166462d61932476229263c2ebe7bbd, hx6507502cd38e4b58139e5423740a5866033dc569],"data":[0x2738, 0x1]}

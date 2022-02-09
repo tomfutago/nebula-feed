@@ -1,25 +1,16 @@
 import sys
-import json
 import requests
 import psycopg2
 from time import sleep
-from iconsdk.icon_service import IconService
-from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.exception import JSONRPCException
 from discord_webhook import DiscordWebhook, DiscordEmbed
-
-from nebula_feed import config
-from nebula_feed import icx_tx
-from nebula_feed import pn_token
-
-# connect to ICON main-net
-icon_service = IconService(HTTPProvider("https://ctz.solidwallet.io", 3))
+from nebula_feed import config, icx_tx, pn_token, pn_items
 
 # function for making a call
 def call(to, method, params):
     call = CallBuilder().to(to).method(method).params(params).build()
-    result = icon_service.call(call)
+    result = config.icon_service.call(call)
     return result
 
 # function for adding new record to ClaimedPlanets table
@@ -53,11 +44,11 @@ def send_log_to_webhook(block_height: int, txHash: str, method: str, error: str)
 
 
 # latest block height
-block_height = icon_service.get_block("latest")["height"]
+block_height = config.icon_service.get_block("latest")["height"]
 
 while True:
     try:
-        block = icon_service.get_block(block_height)
+        block = config.icon_service.get_block(block_height)
         #print("block:", block_height)
     except JSONRPCException:
         sleep(2)
@@ -66,7 +57,8 @@ while True:
         try:
             for tx in block["confirmed_transaction_list"]:
                 if "to" in tx:
-                    if tx["to"] == config.NebulaPlanetTokenCx or tx["to"] == config.NebulaSpaceshipTokenCx or tx["to"] == config.NebulaTokenClaimingCx:
+                    if tx["to"] == config.NebulaPlanetTokenCx or tx["to"] == config.NebulaSpaceshipTokenCx \
+                       or tx["to"] == config.NebulaTokenClaimingCx or tx["to"] == config.NebulaMultiTokenCx:
                         try:
                             # check if tx uses expected method - if not skip and move on
                             method = tx["data"]["method"]
@@ -80,7 +72,8 @@ while True:
                             else:
                                 expected_methods = [
                                     "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
-                                    "finalize_auction", "return_unsold_item", "delist_token"
+                                    "finalize_auction", "return_unsold_item", "delist_token",
+                                    "createSellOrder", "createBuyOrder", "buyTokens", "sellTokens"
                                 ]
                                 if method not in expected_methods:
                                     continue
@@ -90,7 +83,7 @@ while True:
                             sleep(2)
 
                             # check if tx was successful - if not skip and move on
-                            txResult = icon_service.get_transaction_result(tx["txHash"])
+                            txResult = config.icon_service.get_transaction_result(tx["txHash"])
                             # status : 1 on success, 0 on failure
                             if txResult["status"] == 0:
                                 continue
@@ -103,20 +96,23 @@ while True:
                                 txInfoCurrent.contract = config.NebulaPlanetTokenCx
                                 sleep(60)
                             
-                            # pull token details - if operation fails skip and move on
-                            tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
+                            # pull token details
+                            if txInfoCurrent.contract == config.NebulaSpaceshipTokenCx or txInfoCurrent.contract == config.NebulaPlanetTokenCx:
+                                tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
 
-                            # check if json ok - if not skip and move on
-                            if "error" in tokenInfo:
-                                # send to log webhook
-                                response = send_log_to_webhook(block_height, tx["txHash"], method, "token info contains 'error'")
-                                continue
+                                # check if json ok - if not skip and move on
+                                if "error" in tokenInfo:
+                                    # send to log webhook
+                                    response = send_log_to_webhook(block_height, tx["txHash"], method, "token info contains 'error'")
+                                    continue
 
                             # get token info
                             if txInfoCurrent.contract == config.NebulaPlanetTokenCx:
                                 token = pn_token.Planet(txInfoCurrent, tokenInfo)
                             elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
+                            elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
+                                token = pn_items.PNItem(txInfoCurrent)
 
                             if len(token.info) > 0:
                                 if token.isClaimed:

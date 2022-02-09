@@ -1,6 +1,5 @@
 import json
-from nebula_feed import config
-from nebula_feed import icx_tx
+from nebula_feed import config, icx_tx
 
 class PNToken:
     def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: json) -> None:
@@ -19,8 +18,11 @@ class PNToken:
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
             self.discord_webhook = config.discord_claimed_webhook
             self.isClaimed = True
+        elif txInfo.contract == config.NebulaSpaceshipTokenCx:
+            self.discord_webhook = config.discord_ships_webhook
+            self.isClaimed = False
         else:
-            self.discord_webhook = config.discord_market_webhook
+            self.discord_webhook = config.discord_planets_webhook
             self.isClaimed = False
 
         # collect building blocks for discord embed
@@ -161,6 +163,6 @@ class Spaceship(PNToken):
         color = "808B96" #default: gray
         if rarity == "CORE":
             color = "3498DB" #blue
-        elif rarity == "LORE`":
+        elif rarity == "LORE":
             color = "E74C3C" #red
         return color
