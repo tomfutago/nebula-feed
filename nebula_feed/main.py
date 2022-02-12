@@ -73,7 +73,7 @@ while True:
                                 expected_methods = [
                                     "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
                                     "finalize_auction", "return_unsold_item", "delist_token",
-                                    "createSellOrder", "createBuyOrder", "buyTokens", "sellTokens"
+                                    "createSellOrder", "createBuyOrder", "buyTokens", "cancelOrder"
                                 ]
                                 if method not in expected_methods:
                                     continue
@@ -99,12 +99,14 @@ while True:
                             # pull token details
                             if txInfoCurrent.contract == config.NebulaSpaceshipTokenCx or txInfoCurrent.contract == config.NebulaPlanetTokenCx:
                                 tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
+                            elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
+                                tokenInfo = call(txInfoCurrent.contract, "getOrder", {"_orderId": txInfoCurrent.orderId})
 
-                                # check if json ok - if not skip and move on
-                                if "error" in tokenInfo:
-                                    # send to log webhook
-                                    response = send_log_to_webhook(block_height, tx["txHash"], method, "token info contains 'error'")
-                                    continue
+                            # check if json ok - if not skip and move on
+                            if "error" in tokenInfo:
+                                # send to log webhook
+                                response = send_log_to_webhook(block_height, tx["txHash"], method, "token info contains 'error'")
+                                continue
 
                             # get token info
                             if txInfoCurrent.contract == config.NebulaPlanetTokenCx:
@@ -112,7 +114,7 @@ while True:
                             elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
                             elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
-                                token = pn_items.PNItem(txInfoCurrent)
+                                token = pn_items.PNItem(txInfoCurrent, tokenInfo)
 
                             if len(token.info) > 0 and len(token.name) > 0:
                                 if token.isClaimed:

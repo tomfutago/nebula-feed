@@ -91,3 +91,21 @@ events:
 }
 
 {"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[TransferSingle(Address,Address,Address,int,int), hx394ec52117166462d61932476229263c2ebe7bbd, hx394ec52117166462d61932476229263c2ebe7bbd, hx6507502cd38e4b58139e5423740a5866033dc569],"data":[0x2738, 0x1]}
+
+
+
+getOrder(_orderId)
+
+dict
+{
+  "_amount": "0x4",
+  "_amountRemaining": "0x2",
+  "_closedDate": "0x0",
+  "_maker": "hxba2105365dd11d31c9ce6772154c31580a061ae0",
+  "_openedDate": "0x5d7c93bfd4288",
+  "_orderId": "0x1d5",
+  "_price": "0x1bc16d674ec80000",
+  "_status": "PARTIALLY_FILLED",
+  "_tokenId": "0x5",
+  "_type": "SELL"
+}

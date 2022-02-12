@@ -4,20 +4,27 @@ PNItemDict = {
     #0: {"Type": "", "Name": "", "ImageUrl": ""},
     6: {"Type": "CONSUMABLES", "Name": "Bonus Funding", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/bonus-funding.png"},
     7: {"Type": "CONSUMABLES", "Name": "Bonus Supplies", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/bonus-supplies.png"},
-    1: {"Type": "CONSUMABLES", "Name": "Catalytic Chip", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/catalytic-chip.png"},
+    5: {"Type": "CONSUMABLES", "Name": "Catalytic Chip", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/catalytic-chip.png"},
     3: {"Type": "CONSUMABLES", "Name": "Portable Hyperscan", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/portable-hyperscan.png"},
-    4: {"Type": "CONSUMABLES", "Name": "Regenerative Nanopaste", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/regenerative-nanopaste.png"}
+    4: {"Type": "CONSUMABLES", "Name": "Regenerative Nanopaste", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/regenerative-nanopaste.png"},
+    9: {"Type": "BLUEPRINTS", "Name": "Abnormality Detector", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/blueprint.png"},
+    11: {"Type": "BLUEPRINTS", "Name": "Ceres Autocannon", "ImageUrl": "https://d2r1p2wt01zdse.cloudfront.net/icons/blueprint.png"}
 }
 
 class PNItem:
-    def __init__(self, txInfo: icx_tx.TxInfo) -> None:
+    def __init__(self, txInfo: icx_tx.TxInfo, tokenInfo: dict) -> None:
         # obfuscate address
         self.address = txInfo.address[:8] + ".." + txInfo.address[34:]
+
+        tokenId = txInfo.tokenId
+
+        if tokenId == 0:
+            tokenId = int(tokenInfo["_tokenId"], 16)
         
         # get common attributes
-        self.type = self.getItemInfo(txInfo.tokenId, "Type")
-        self.name = self.getItemInfo(txInfo.tokenId, "Name")
-        self.image_url = self.getItemInfo(txInfo.tokenId, "ImageUrl")
+        self.type = self.getItemInfo(tokenId, "Type")
+        self.name = self.getItemInfo(tokenId, "Name")
+        self.image_url = self.getItemInfo(tokenId, "ImageUrl")
         self.timestamp = txInfo.timestamp
         self.discord_webhook = config.discord_items_webhook
         self.isClaimed = False
@@ -36,18 +43,19 @@ class PNItem:
             self.info += "\nBuyer: " + self.address
             self.info += "\nPrice: " + txInfo.set_price
             self.info += "\nAmount: " + txInfo.amount
-        elif txInfo.method == "sellTokens":
-            self.title = "Tokens sold!"
-            self.footer = "Sold on "
-            self.info += "\nSeller: " + self.address
-            self.info += "\nPrice: " + txInfo.set_price
-            self.info += "\nAmount: " + txInfo.amount
         elif txInfo.method == "buyTokens":
             self.title = "Tokens bought!"
             self.footer = "Bought on "
             self.info += "\nBuyer: " + self.address
-            self.info += "\nPrice: " + txInfo.set_price
+            self.info += "\nPrice: " + txInfo.cost
             self.info += "\nAmount: " + txInfo.amount
+            self.info += "\nSold by: " + str(tokenInfo["_maker"])
+        elif txInfo.method == "cancelOrder":
+            self.title = "Order cancelled!"
+            self.footer = "Cancelled on "
+            self.info += "\nOwner: " + self.address
+            self.info += "\nPrice: " + f'{int(tokenInfo["_price"], 16) / 10 ** 18 :.2f} ICX'
+            self.info += "\nAmount: " + str(int(tokenInfo["_amount"], 16))
 
     def getItemInfo(self, tokenId: int, attrib: str) -> str:
         res = ""
