@@ -49,9 +49,9 @@ class PNItem:
             self.info += "\nBuyer: " + self.address
             self.info += "\nPrice: " + txInfo.cost
             self.info += "\nAmount: " + txInfo.amount
-            self.info += "\nSold by: " + str(tokenInfo["_maker"])
+            self.info += "\nSold by: " + str(tokenInfo["_maker"])[:8] + ".." + str(tokenInfo["_maker"])[34:]
         elif txInfo.method == "cancelOrder":
-            self.title = "Order cancelled!"
+            self.title = str(tokenInfo["_type"]).title() + " order cancelled!"
             self.footer = "Cancelled on "
             self.info += "\nOwner: " + self.address
             self.info += "\nPrice: " + f'{int(tokenInfo["_price"], 16) / 10 ** 18 :.2f} ICX'

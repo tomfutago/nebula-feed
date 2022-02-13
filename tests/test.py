@@ -4,6 +4,8 @@ cost = f"{int('146253000000000000000') / 10 ** 18 :.2f} ICX"
 print(cost)
 """
 
+import json
+import requests
 from nebula_feed import config, icx_tx, pn_token, pn_items
 from iconsdk.builder.call_builder import CallBuilder
 
@@ -12,12 +14,15 @@ def call(to, method, params):
     result = config.icon_service.call(call)
     return result
 
-block_height = 46085337
+#block_height = 46085337 #items
+block_height = 46125434 #item bought
+#block_height = 46107330 #claimed Undiscovered Planet
 block = config.icon_service.get_block(block_height)
 
 for tx in block["confirmed_transaction_list"]:
     if "to" in tx:
-        if tx["to"] == config.NebulaMultiTokenCx:
+        if tx["to"] == config.NebulaPlanetTokenCx or tx["to"] == config.NebulaSpaceshipTokenCx \
+           or tx["to"] == config.NebulaTokenClaimingCx or tx["to"] == config.NebulaMultiTokenCx:
             txInfoCurrent = icx_tx.TxInfo(tx)
             break
 
@@ -25,12 +30,18 @@ print(txInfoCurrent.method)
 print(txInfoCurrent.orderId)
 print(txInfoCurrent.tokenId)
 
-tokenInfo = call(txInfoCurrent.contract, "getOrder", {"_orderId": txInfoCurrent.orderId})
-print(int(tokenInfo["_tokenId"], 16))
-
 if txInfoCurrent.contract == config.NebulaMultiTokenCx:
+    tokenInfo = call(txInfoCurrent.contract, "getOrder", {"_orderId": txInfoCurrent.orderId})
+    print(int(tokenInfo["_tokenId"], 16))
     token = pn_items.PNItem(txInfoCurrent, tokenInfo)
+    print(token.name)
+    print(int(tokenInfo["_amount"], 16))
+    print(f'{int(tokenInfo["_price"], 16) / 10 ** 18 :.2f} ICX')
+    print(token.info)
 
-print(token.name)
-print(int(tokenInfo["_amount"], 16))
-print(f'{int(tokenInfo["_price"], 16) / 10 ** 18 :.2f} ICX')
+if txInfoCurrent.contract == config.NebulaTokenClaimingCx or txInfoCurrent.contract == config.NebulaNonCreditClaim:
+    txInfoCurrent.contract = config.NebulaPlanetTokenCx
+    tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
+    print(json.dumps(tokenInfo, indent=2))
+    token = pn_token.Planet(txInfoCurrent, tokenInfo)
+    print(token.name)
