@@ -18,7 +18,7 @@ class PNItem:
 
         tokenId = txInfo.tokenId
 
-        if tokenId == 0:
+        if tokenId == 0 and txInfo.method == "cancelOrder":
             tokenId = int(tokenInfo["_tokenId"], 16)
         
         # get common attributes

@@ -14,7 +14,8 @@ def call(to, method, params):
     result = config.icon_service.call(call)
     return result
 
-block_height = 46125434 #item bought
+#block_height = 46125434 #item bought
+block_height = 46175845 #cancelOrder
 #block_height = 46161894 #claim_token
 #block_height = 46139022 #create_auction
 #block_height = 46156240 #list_token
@@ -43,6 +44,15 @@ if txInfoCurrent.contract == config.NebulaMultiTokenCx:
 if txInfoCurrent.contract == config.NebulaTokenClaimingCx or txInfoCurrent.contract == config.NebulaNonCreditClaim:
     txInfoCurrent.contract = config.NebulaPlanetTokenCx
     tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
-    print(json.dumps(tokenInfo, indent=2))
+    #print(json.dumps(tokenInfo, indent=2))
     token = pn_token.Planet(txInfoCurrent, tokenInfo)
+    print(token.name)
+
+if txInfoCurrent.contract == config.NebulaSpaceshipTokenCx or txInfoCurrent.contract == config.NebulaPlanetTokenCx:
+    tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
+    #print(json.dumps(tokenInfo, indent=2))
+    if txInfoCurrent.contract == config.NebulaPlanetTokenCx:
+        token = pn_token.Planet(txInfoCurrent, tokenInfo)
+    elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
+        token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
     print(token.name)

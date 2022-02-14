@@ -22,7 +22,7 @@ class TxInfo:
         self.set_price = ""
         self.starting_price = ""
         self.duration_in_hours = ""
-        tmpTokenId = ""
+        tmpTokenId = "0"
 
         # method specific properties
         if self.method == "buyTokens" or self.method == "cancelOrder":
@@ -36,6 +36,8 @@ class TxInfo:
             tmpTokenId = tx["data"]["params"]["_tokenId"]
         elif self.method == "buyTokens":
             tmpTokenId = self.get_TokenIdFromOrderId()
+        elif self.method == "cancelOrder":
+            tmpTokenId = "0"
         else:
             tmpTokenId = tx["data"]["params"]["_token_id"]
         
