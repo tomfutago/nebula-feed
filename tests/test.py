@@ -14,9 +14,10 @@ def call(to, method, params):
     result = config.icon_service.call(call)
     return result
 
-#block_height = 46085337 #items
 block_height = 46125434 #item bought
-#block_height = 46107330 #claimed Undiscovered Planet
+#block_height = 46161894 #claim_token
+#block_height = 46139022 #create_auction
+#block_height = 46156240 #list_token
 block = config.icon_service.get_block(block_height)
 
 for tx in block["confirmed_transaction_list"]:

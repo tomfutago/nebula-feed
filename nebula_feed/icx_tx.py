@@ -22,6 +22,7 @@ class TxInfo:
         self.set_price = ""
         self.starting_price = ""
         self.duration_in_hours = ""
+        tmpTokenId = ""
 
         # method specific properties
         if self.method == "buyTokens" or self.method == "cancelOrder":
@@ -30,15 +31,19 @@ class TxInfo:
         if self.method == "transfer":
             self.contract = self.address # tokens claimed for credits are transffered from specifc address rather than claiming contract
             self.address = str(tx["data"]["params"]["_to"])
-            self.tokenId = hex_to_int(tx["data"]["params"]["_tokenId"])
+            tmpTokenId = tx["data"]["params"]["_tokenId"]
         elif self.method == "createBuyOrder" or self.method == "createSellOrder":
-            self.tokenId = hex_to_int(tx["data"]["params"]["_tokenId"])
+            tmpTokenId = tx["data"]["params"]["_tokenId"]
         elif self.method == "buyTokens":
-            self.tokenId = self.get_TokenIdFromOrderId()
-        elif self.method == "cancelOrder":
-            self.tokenId = 0
+            tmpTokenId = self.get_TokenIdFromOrderId()
         else:
-            self.tokenId = hex_to_int(tx["data"]["params"]["_token_id"])
+            tmpTokenId = tx["data"]["params"]["_token_id"]
+        
+        # convert TokenId to int
+        if tmpTokenId[:2] == "0x":
+            self.tokenId = hex_to_int(tmpTokenId)
+        else:
+            self.tokenId = int(tmpTokenId)
 
         if self.method == "create_auction":
             self.starting_price = f'{hex_to_int(tx["data"]["params"]["_starting_price"]) / 10 ** 18 :.2f} ICX'
@@ -62,14 +67,14 @@ class TxInfo:
                         break
         return icx_amt
 
-    def get_TokenIdFromOrderId(self) -> int:
+    def get_TokenIdFromOrderId(self) -> str:
         txResult = config.icon_service.get_transaction_result(self.txHash)
-        tokenId = 0
+        tokenId = ""
         if txResult["status"] == 1: #success
             for x in txResult["eventLogs"]:
                 if x["scoreAddress"] == config.NebulaMultiTokenCx:
                     if "BuyTokens(int,int,Address,Address,int,int)" in x["indexed"]:
                         if hex_to_int(x["indexed"][1]) == self.orderId:
-                            tokenId = hex_to_int(x["indexed"][2])
+                            tokenId = x["indexed"][2]
                             break
         return tokenId
