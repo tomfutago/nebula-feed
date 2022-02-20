@@ -44,12 +44,19 @@ class PNItem:
             self.info += "\nPrice: " + txInfo.set_price
             self.info += "\nAmount: " + txInfo.amount
         elif txInfo.method == "buyTokens":
-            self.title = "Tokens bought!"
+            self.title = "Items bought!"
             self.footer = "Bought on "
             self.info += "\nBuyer: " + self.address
             self.info += "\nPrice: " + txInfo.cost
             self.info += "\nAmount: " + txInfo.amount
             self.info += "\nSold by: " + str(tokenInfo["_maker"])[:8] + ".." + str(tokenInfo["_maker"])[34:]
+        elif txInfo.method == "sellTokens":
+            self.title = "Items sold!"
+            self.footer = "Sold on "
+            self.info += "\nBuyer: " + str(tokenInfo["_maker"])[:8] + ".." + str(tokenInfo["_maker"])[34:]
+            self.info += "\nPrice: " + f'{int(tokenInfo["_price"], 16) / 10 ** 18 :.2f} ICX'
+            self.info += "\nAmount: " + txInfo.amount
+            self.info += "\nSold by: " + self.address
         elif txInfo.method == "cancelOrder":
             self.title = str(tokenInfo["_type"]).title() + " order cancelled!"
             self.footer = "Cancelled on "

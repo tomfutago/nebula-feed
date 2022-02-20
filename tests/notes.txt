@@ -36,6 +36,17 @@ events:
 {"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[ICXTransfer(Address,Address,int), cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a, hx2d9f00e2693e0bf74d88f2d7f262e7ec664cfb6f, 0x43a77aabd0078000],"data":[]}
 
 
+{
+	"method": "sellTokens",
+	"params": {
+		"_orderId": "0x22f",
+		"_amount": "0x1"
+	}
+}
+
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[SellTokens(int,int,Address,Address,int,int), 0x22f, 0x4],"data":[hxba2105365dd11d31c9ce6772154c31580a061ae0, hxe57744d185fec52652b6d389755ef3e531954e3d, 0x1, 0x3e73362871420000]}
+{"scoreAddress":"cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a","indexed":[ICXTransfer(Address,Address,int), cx85954d0dae92b63bf5cba03a59ca4ffe687bad0a, hxba2105365dd11d31c9ce6772154c31580a061ae0, 0x3ce388010806c000],"data":[]}
+
 
 {
 	"method": "cancelOrder",

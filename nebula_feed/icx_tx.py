@@ -25,7 +25,7 @@ class TxInfo:
         tmpTokenId = "0"
 
         # method specific properties
-        if self.method == "buyTokens" or self.method == "cancelOrder":
+        if self.method == "buyTokens" or self.method == "sellTokens" or self.method == "cancelOrder":
             self.orderId = hex_to_int(tx["data"]["params"]["_orderId"])
 
         if self.method == "transfer":
@@ -34,7 +34,7 @@ class TxInfo:
             tmpTokenId = tx["data"]["params"]["_tokenId"]
         elif self.method == "createBuyOrder" or self.method == "createSellOrder":
             tmpTokenId = tx["data"]["params"]["_tokenId"]
-        elif self.method == "buyTokens":
+        elif self.method == "buyTokens" or self.method == "sellTokens":
             tmpTokenId = self.get_TokenIdFromOrderId()
         elif self.method == "cancelOrder":
             tmpTokenId = "0"
@@ -55,7 +55,7 @@ class TxInfo:
         elif self.method == "createBuyOrder" or self.method == "createSellOrder":
             self.amount = str(hex_to_int(tx["data"]["params"]["_amount"]))
             self.set_price = f'{hex_to_int(tx["data"]["params"]["_price"]) / 10 ** 18 :.2f} ICX'
-        elif self.method == "buyTokens":
+        elif self.method == "buyTokens" or self.method == "sellTokens":
             self.amount = str(hex_to_int(tx["data"]["params"]["_amount"]))
 
     def get_ICXTransfer(self) -> str:
@@ -75,7 +75,7 @@ class TxInfo:
         if txResult["status"] == 1: #success
             for x in txResult["eventLogs"]:
                 if x["scoreAddress"] == config.NebulaMultiTokenCx:
-                    if "BuyTokens(int,int,Address,Address,int,int)" in x["indexed"]:
+                    if "BuyTokens(int,int,Address,Address,int,int)" in x["indexed"] or "SellTokens(int,int,Address,Address,int,int)" in x["indexed"]:
                         if hex_to_int(x["indexed"][1]) == self.orderId:
                             tokenId = x["indexed"][2]
                             break

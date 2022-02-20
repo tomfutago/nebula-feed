@@ -73,7 +73,7 @@ while True:
                                 expected_methods = [
                                     "claim_token", "create_auction", "list_token", "place_bid", "purchase_token",
                                     "finalize_auction", "return_unsold_item", "delist_token",
-                                    "createSellOrder", "createBuyOrder", "buyTokens", "cancelOrder"
+                                    "createSellOrder", "createBuyOrder", "buyTokens", "sellTokens", "cancelOrder"
                                 ]
                                 if method not in expected_methods:
                                     continue
