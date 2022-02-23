@@ -50,7 +50,7 @@ while True:
     try:
         block = config.icon_service.get_block(block_height)
         #print("block:", block_height)
-    except JSONRPCException:
+    except:
         sleep(2)
         continue
     else:
@@ -100,7 +100,10 @@ while True:
                             if txInfoCurrent.contract == config.NebulaSpaceshipTokenCx or txInfoCurrent.contract == config.NebulaPlanetTokenCx:
                                 tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
                             elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
-                                tokenInfo = call(txInfoCurrent.contract, "getOrder", {"_orderId": txInfoCurrent.orderId})
+                                orderInfo = call(txInfoCurrent.contract, "getOrder", {"_orderId": txInfoCurrent.orderId})
+                                if txInfoCurrent.tokenId == 0:
+                                    txInfoCurrent.tokenId = int(orderInfo["_tokenId"], 16)
+                                tokenInfo = requests.get(call(txInfoCurrent.contract, "tokenURI", {"_tokenId": txInfoCurrent.tokenId})).json()
 
                             # check if json ok - if not skip and move on
                             if "error" in tokenInfo:
@@ -114,7 +117,7 @@ while True:
                             elif txInfoCurrent.contract == config.NebulaSpaceshipTokenCx:
                                 token = pn_token.Spaceship(txInfoCurrent, tokenInfo)
                             elif txInfoCurrent.contract == config.NebulaMultiTokenCx:
-                                token = pn_items.PNItem(txInfoCurrent, tokenInfo)
+                                token = pn_items.PNItem(txInfoCurrent, tokenInfo, orderInfo)
 
                             if len(token.info) > 0 and len(token.name) > 0:
                                 if token.isClaimed:

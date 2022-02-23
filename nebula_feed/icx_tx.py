@@ -4,7 +4,10 @@ from nebula_feed import config
 
 # util function
 def hex_to_int(hex) -> int:
-    return int(hex, 16)
+    if hex[:2] == "0x":
+        return int(hex, 16)
+    else:
+        return int(hex)
 
 # class to collect info available in icx transaction
 class TxInfo:
@@ -42,10 +45,7 @@ class TxInfo:
             tmpTokenId = tx["data"]["params"]["_token_id"]
         
         # convert TokenId to int
-        if tmpTokenId[:2] == "0x":
-            self.tokenId = hex_to_int(tmpTokenId)
-        else:
-            self.tokenId = int(tmpTokenId)
+        self.tokenId = hex_to_int(tmpTokenId)
 
         if self.method == "create_auction":
             self.starting_price = f'{hex_to_int(tx["data"]["params"]["_starting_price"]) / 10 ** 18 :.2f} ICX'

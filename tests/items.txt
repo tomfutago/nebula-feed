@@ -1,3 +1,17 @@
+https://api.projectnebula.app/item/5
+
+{
+    "item_id": 5,
+    "name": "Catalytic Chip",
+    "description": "Catalytic Chip gives you +150 Research points.",
+    "type": "consumable",
+    "image_path": "catalytic-chip.png",
+    "flavor_text": "This single-use chip allows the user to temporarily speed up the processing power of the vessel’s main computer.",
+    "effect": "RESEARCH_BOOSTER"
+}
+
+
+
 CONSUMABLES
 Bonus Funding
 Bonus Supplies
