@@ -9,7 +9,7 @@ class PNItem:
         # get common attributes
         self.type = str(tokenInfo["type"])
         self.name = str(tokenInfo["name"])
-        self.description = str(tokenInfo["description"])
+        self.description = str(tokenInfo["flavor_text"])
         self.image_url = "https://d2r1p2wt01zdse.cloudfront.net/icons/" + str(tokenInfo["image_path"])
         self.timestamp = txInfo.timestamp
         self.discord_webhook = config.discord_items_webhook
