@@ -16,13 +16,13 @@ class PNToken:
 
         # set destination discord channel
         if txInfo.method == "claim_token" or txInfo.method == "transfer":
-            self.discord_webhook = config.discord_claimed_webhook
+            self.discord_webhook = [config.discord_claimed_webhook, config.discord_claimed_webhook_2]
             self.isClaimed = True
         elif txInfo.contract == config.NebulaSpaceshipTokenCx:
-            self.discord_webhook = config.discord_ships_webhook
+            self.discord_webhook = [config.discord_ships_webhook, config.discord_ships_webhook_2]
             self.isClaimed = False
         else:
-            self.discord_webhook = config.discord_planets_webhook
+            self.discord_webhook = [config.discord_planets_webhook, config.discord_planets_webhook_2]
             self.isClaimed = False
 
         # collect building blocks for discord embed
@@ -85,7 +85,7 @@ class Planet(PNToken):
         # check name for claimed planets
         if self.name.upper() == "UNDISCOVERED PLANET":
             self.isUndiscovered = True
-            self.discord_webhook = config.discord_log_webhook
+            self.discord_webhook = [config.discord_log_webhook]
             self.info += "\nUNDISCOVERED PLANET - tokenId: " + str(txInfo.tokenId)
         else:
             self.isUndiscovered = False

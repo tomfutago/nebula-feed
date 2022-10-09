@@ -20,7 +20,8 @@ def call(to, method, params):
 #block_height = 46161894 #claim_token
 #block_height = 46139022 #create_auction
 #block_height = 46156240 #list_token
-block_height = 46533984 #createSellOrder
+#block_height = 46533984 #createSellOrder
+block_height = 54829386 #buyTokens (ship slot)
 block = config.icon_service.get_block(block_height)
 
 for tx in block["confirmed_transaction_list"]:

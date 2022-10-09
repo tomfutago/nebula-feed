@@ -11,12 +11,19 @@ is_heroku = os.getenv("IS_HEROKU", None)
 if not is_heroku:
     load_dotenv()
 
+# env vars
+db_url = os.getenv("DATABASE_URL")
 discord_log_webhook = os.getenv("DISCORD_LOG_WEBHOOK")
+
 discord_claimed_webhook = os.getenv("DISCORD_CLAIMED_WEBHOOK")
 discord_planets_webhook = os.getenv("DISCORD_PLANETS_WEBHOOK")
 discord_ships_webhook = os.getenv("DISCORD_SHIPS_WEBHOOK")
 discord_items_webhook = os.getenv("DISCORD_ITEMS_WEBHOOK")
-db_url = os.getenv("DATABASE_URL")
+
+discord_claimed_webhook_2 = os.getenv("DISCORD_CLAIMED_WEBHOOK_2")
+discord_planets_webhook_2 = os.getenv("DISCORD_PLANETS_WEBHOOK_2")
+discord_ships_webhook_2 = os.getenv("DISCORD_SHIPS_WEBHOOK_2")
+discord_items_webhook_2 = os.getenv("DISCORD_ITEMS_WEBHOOK_2")
 
 # custom emoji IDs - removed as discord complains about excedding API rate limits
 #credits_emoji = os.getenv("credits_emoji")

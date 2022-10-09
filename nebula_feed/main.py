@@ -120,8 +120,8 @@ while True:
                                 token = pn_items.PNItem(txInfoCurrent, tokenInfo, orderInfo)
 
                             if len(token.info) > 0 and len(token.name) > 0:
-                                if token.isClaimed:
-                                    add_to_ClaimedPlanets(txInfoCurrent.tokenId, token.name, txInfoCurrent.timestamp_iso)
+                                #if token.isClaimed:
+                                #    add_to_ClaimedPlanets(txInfoCurrent.tokenId, token.name, txInfoCurrent.timestamp_iso)
                                 
                                 webhook = DiscordWebhook(url=token.discord_webhook, rate_limit_retry=True)
                                 embed = DiscordEmbed(title=token.title, description=token.generate_discord_info(), color=token.set_color())

@@ -12,7 +12,7 @@ class PNItem:
         self.description = str(tokenInfo["flavor_text"])
         self.image_url = "https://d2r1p2wt01zdse.cloudfront.net/icons/" + str(tokenInfo["image_path"])
         self.timestamp = txInfo.timestamp
-        self.discord_webhook = config.discord_items_webhook
+        self.discord_webhook = [config.discord_items_webhook, config.discord_items_webhook_2]
         self.isClaimed = False
         self.info = "\n"
 
