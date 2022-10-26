@@ -104,7 +104,7 @@ class Planet(PNToken):
         # create discord info output
         # markdown options: *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`
         info = "**" + self.name.upper() + "**"
-        info += "\n" + self.region.upper() + " - " + self.sector.upper()
+        info += "\n" + self.region.title().replace("'S", "'s") + " - " + self.sector.title().replace("'S", "'s")
         info += "\n" + self.rarity.upper() + " / " + self.generation.upper()
         info += "\n"
         info += "\nType: " + self.type.lower().strip()
